@@ -29,7 +29,7 @@ const { Client } = require('pg');				 // Postgres
 const qreditjs = require("qreditjs");
 const path = require('path');
 
-var iniconfig = ini.parse(fs.readFileSync('/etc/qslp/qslp.ini', 'utf-8'))
+var iniconfig = ini.parse(fs.readFileSync('/qslp.ini', 'utf-8'))
 
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
@@ -1926,8 +1926,11 @@ function initialize() {
 		getSeedPeers();
 
 		// Defaults qm2/qm3
-		validatePeer('127.0.0.1', 8001);
-		validatePeer('127.0.0.1', 8002);
+		validatePeer('95.217.235.75', 8001);
+		validatePeer('116.203.70.214', 8001);
+		validatePeer('78.47.141.58', 8001);
+		validatePeer('135.181.106.105', 8001);
+		validatePeer('95.217.186.135', 8001);
 
 	})();
 
