@@ -1,0 +1,1647 @@
+openapi: 3.0.1
+info:
+  title: QAE API
+  description: |
+    API Documentation for the QAE v1 & v2 API
+    <h4>API Endpoint URL</h4>
+    The endpoint for our REST API is:  <code>https://qae.qredit.cloud/api</code>
+    <br /><br />
+    <h4>Datetime Formatting</h4>
+    Unless otherwise stated, all timestamps are returned in ISO8601 format in UTC. Example: "2018-04-01T00:00:00Z" or "2018-04-01T00:00:00.000Z".   If a timestamp is returned as an Integer, then that is a Unix timestamp.
+    <br /><br />
+    <h4>Number Formatting</h4>
+    All finance data such as price, quantity, and fee should be arbitrary precision numbers and string representation. Example: "5.39300000"
+    <br /><br />
+    <h4>Helpful Classes</h4>
+    We have Python, PHP, and NodeJS classes available on our GitHub:  <a href="https://github.com/qredit/" target=new><strong><u>https://github.com/qredit/</u></strong></a>
+    <br /><br />
+    <h4>HTTP Status Codes</h4>
+    <code>200</code> OK Successful request<br />
+    <code>400</code> Bad Request. Returns JSON with the error message<br />
+    <code>401</code> Unauthorized. Authorization required or failed<br />
+    <code>403</code> Forbidden. Action is forbidden for API key<br />
+    <code>429</code> Too Many Requests. Your connection is being rate limited<br />
+    <code>500</code> Internal Server. Internal Server Error<br />
+    <code>503</code> Service Unavailable. Service is down for maintenance<br />
+    <code>504</code> Gateway Timeout. Request timeout expired
+    <br /><br />
+    <h4>Error Codes</h4>
+    <table class="table table-striped">
+    <thead>
+    <tr><td>Error Code</td><td>HTTP Status Code</td><td>Message</td><td>Details</td></tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>400</td>
+    <td>400</td>
+    <td style="text-align: left">Unknown error</td>
+    <td style="text-align: left">An unknown error occurred somewhere in the system</td>
+    </tr>
+    <tr>
+    <td>402</td>
+    <td>400</td>
+    <td style="text-align: left">Method not found</td>
+    <td style="text-align: left">The requested API method was not found</td>
+    </tr>
+    <tr>
+    <td>403</td>
+    <td>401</td>
+    <td style="text-align: left">Action is forbidden for account</td>
+    <td style="text-align: left"></td>
+    </tr>
+    <tr>
+    <td>429</td>
+    <td>429</td>
+    <td style="text-align: left">Too many requests</td>
+    <td style="text-align: left">Action is being rate limited for account</td>
+    </tr>
+    <tr>
+    <td>500</td>
+    <td>500</td>
+    <td style="text-align: left">Internal Server Error</td>
+    <td style="text-align: left"></td>
+    </tr>
+    <tr>
+    <td>503</td>
+    <td>503</td>
+    <td style="text-align: left">Service Unavailable</td>
+    <td style="text-align: left">Try it again later</td>
+    </tr>
+    <tr>
+    <td>504</td>
+    <td>504</td>
+    <td style="text-align: left">Gateway Timeout</td>
+    <td style="text-align: left">Check the result of your request later</td>
+    </tr>
+    <tr>
+    <td>10001</td>
+    <td>400</td>
+    <td style="text-align: left">Validation error</td>
+    <td style="text-align: left">Input not valid</td>
+    </tr>
+    </tbody>
+    </table>
+  version: 1.0.2
+servers:
+- url: https://qae.qredit.cloud/api
+paths:
+  /status:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get system status
+      description: |
+        Get a some basic information about the QAE system status
+      responses:
+        200:
+          description: Status Info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /tokens:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get a listing of tokens
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Token List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Token'
+        400:
+          description: Tokens not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /token/{id}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get token info
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Token ID Hex
+      responses:
+        200:
+          description: Token Information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          description: Currency not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tokenByTxid/{txid}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get token info by transaction id of creation
+      parameters:
+      - name: txid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Transaction ID of genesis
+      responses:
+        200:
+          description: Token Information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          description: Currency not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tokensByOwner/{address}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get token info by address of owner
+      parameters:
+      - name: address
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Qredit address
+      responses:
+        200:
+          description: Token Information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Token'
+        400:
+          description: Currency not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tokenWithMeta/{id}:
+    get:
+      tags:
+      - QAE2
+      summary: Get token info with meta data
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Token ID Hex
+      responses:
+        200:
+          description: Token Information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenWithMeta'
+        400:
+          description: Currency not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /addresses:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get a listing of token addresses
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Address List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: '#/components/schemas/AddressQAE1'
+                  - $ref: '#/components/schemas/AddressQAE2'
+        400:
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /addresses/{address}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get all tokens for an address
+      parameters:
+      - name: address
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Qredit address
+      responses:
+        200:
+          description: Address List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: '#/components/schemas/AddressQAE1'
+                  - $ref: '#/components/schemas/AddressQAE2'
+        400:
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /addressesByTokenId/{tokenid}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get all addresses for a token
+      parameters:
+      - name: tokenid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Token ID Hex
+      responses:
+        200:
+          description: Address List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: '#/components/schemas/AddressQAE1'
+                  - $ref: '#/components/schemas/AddressQAE2'
+        400:
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /balance/{tokenid}/{address}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get human readable balance for address/tokenid
+      parameters:
+      - name: tokenid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Token ID Hex
+      - name: address
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Qredit Address
+      responses:
+        200:
+          description: Balance
+          content:
+            application/json:
+              schema:
+                type: string
+                description: human readable balance for address/tokenid
+        400:
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /transaction/{txid}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get a listing of tokens
+      parameters:
+      - name: txid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Transaction ID
+      responses:
+        200:
+          description: Transaction Information
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/TransactionQAE1'
+                - $ref: '#/components/schemas/TransactionQAE2'
+        400:
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /transactions/{tokenid}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get a listing of transactions
+      parameters:
+      - name: tokenid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Token ID
+      responses:
+        200:
+          description: Transaction List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: '#/components/schemas/TransactionQAE1'
+                  - $ref: '#/components/schemas/TransactionQAE2'
+        400:
+          description: Tokens not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /transactions/{tokenid}/{address}:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get a listing of transactions
+      parameters:
+      - name: tokenid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Token ID
+      - name: address
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Qredit Address
+      responses:
+        200:
+          description: Transaction List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: '#/components/schemas/TransactionQAE1'
+                  - $ref: '#/components/schemas/TransactionQAE2'
+        400:
+          description: Tokens not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /transactions:
+    get:
+      tags:
+      - QAE1/QAE2
+      summary: Get a listing of transactions
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Transaction List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: '#/components/schemas/TransactionQAE1'
+                  - $ref: '#/components/schemas/TransactionQAE2'
+        400:
+          description: Tokens not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /metadata/{txid}:
+    get:
+      tags:
+      - QAE2
+      summary: Get metadata by txid
+      parameters:
+      - name: txid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Transaction ID of transaction containing metadata
+      responses:
+        200:
+          description: MetaData Information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetaData'
+        400:
+          description: Currency not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /metadata/{tokenid}:
+    get:
+      tags:
+      - QAE2
+      summary: Get metadata by token id
+      parameters:
+      - name: tokenid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Token ID hexcode to get metadata for
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: MetaData Information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetaData'
+        400:
+          description: Currency not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /metadata/{tokenid}/{address}:
+    get:
+      tags:
+      - QAE2
+      summary: Get metadata by token id & poster address
+      parameters:
+      - name: tokenid
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Token ID hexcode to get metadata for
+      - name: address
+        in: path
+        required: true
+        schema:
+          type: string
+        description:  Qredit address of the metadata poster
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: MetaData Information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetaData'
+        400:
+          description: Currency not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_genesis:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:GENESIS
+      parameters:
+      - name: decimals
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Number of decimal places the token has
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: uri
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: quantity
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Human readable quantity, such as "100.999"
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pausable
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: mintable
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_burn:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:BURN
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: quantity
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Human readable quantity, such as "100.999"
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_mint:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:MINT
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: quantity
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Human readable quantity, such as "100.999"
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_send:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:SEND
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: quantity
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Human readable quantity, such as "100.999"
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_pause:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:PAUSE
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_resume:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:RESUME
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_newowner:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:NEWOWNER
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_freeze:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:FREEZE
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae1_unfreeze:
+    get:
+      tags:
+      - VendorField QAE1
+      summary: Generate VendorField JSON String for QAE1:UNFREEZE
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae2_genesis:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:GENESIS
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: uri
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: pausable
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+  /vendor_qae2_pause:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:PAUSE
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae2_resume:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:RESUME
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae2_newowner:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:NEWOWNER
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae2_authmeta:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:AUTHMETA
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae2_revokemeta:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:REVOKEMETA
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae2_clone:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:CLONE
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: notes
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae2_addmeta:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:ADDMETA
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: chunk
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: data
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /vendor_qae2_voidmeta:
+    get:
+      tags:
+      - VendorField QAE2
+      summary: Generate VendorField JSON String for QAE2:VOIDMETA
+      parameters:
+      - name: tokenid
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: transactionid
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Encoded JSON String
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Stringified JSON to use in Vendor Field
+        400:
+          description: An Error Occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Status:
+      type: object
+      properties:
+        downloadedBlocks:
+          type: integer
+          description: Blocks Downloaded
+        ScannedBlocks:
+          type: integer
+          description: Blocks Scanned into QAE
+    Token:
+      type: object
+      properties:
+        schema_version:
+          type: integer
+          description: Schema Version
+        type:
+          type: string
+          description: QAE1 or QAE2
+        paused:
+          type: boolean
+          description: token paused for activity
+        tokenDetails:
+          type: object
+          properties:
+            schema_version:
+              type: integer
+            ownerAddress:
+              type: string
+              description: Qredit address of token contract controller
+            tokenIdHex:
+              type: string
+              description: Token ID Code
+            versionType:
+              type: integer
+              description: QAE version (1 or 2)
+            genesis_timestamp:
+              type: string
+              format: date-time
+              description: Datetime token was created
+            genesis_timestamp_unix:
+              type: integer
+              description: Unix timestamp token was created
+            symbol:
+              type: string
+              description: Ticker code for token
+            name:
+              type: string
+              description: Token name
+            documentUri:
+              type: string
+              description: Generally a url pointing to token homepage
+            decimals:
+              type: integer
+              description: Number of decimal places this token has
+            genesisQuantity:
+              type: string
+              description: String formatted number of the genesis quantity in raw form (no decimals)
+            pausable:
+              type: boolean
+              description: Is the token pausable
+            mintable:
+              type: boolean
+              description: Can additional tokens be minted
+        tokenStats:
+          type: object
+          properties:
+            schema_version:
+              type: integer
+              description: Schema Version Number
+            block_created_height:
+              type: integer
+              description: Block height the token was created at
+            block_created_id:
+              type: string
+              description: Block ID/Hash the token was created in
+            block_last_active_send:
+              type: integer
+              description: Block height of last token transfer
+            block_last_active_mint:
+              type: integer
+              description: Block height of last mint action
+            creation_transaction_id:
+              type: string
+              description: Transaction ID the token was created with
+            qty_valid_txns_since_genesis:
+              type: integer
+              description: Number of transactions on network since token created
+            qty_valid_token_addresses:
+              type: integer
+              description: Number of addresses that have made transactions with this token
+            qty_token_minted:
+              type: string
+              description: String formatted number of total tokens minted in raw form (no decimals)
+            qty_token_burned:
+              type: string
+              description: String formatted number of total tokens burned in raw form (no decimals)
+            qty_token_circulating_supply:
+              type: string
+              description: String formatted number of total tokens in circulation in raw form (no decimals)
+            qty_xqr_spent:
+              type: string
+              description: String formatted number of total XQR spend for all transactions in raw form (no decimals)
+        lastUpdatedBlock:
+          type: integer
+          description: Last block height a transaction has occurred for this token
+    TokenWithMeta:
+      type: object
+      properties:
+        schema_version:
+          type: integer
+          description: Schema Version
+        type:
+          type: string
+          description: QAE2
+        paused:
+          type: boolean
+          description: token paused for activity
+        tokenDetails:
+          type: object
+          properties:
+            schema_version:
+              type: integer
+            ownerAddress:
+              type: string
+              description: Qredit address of token contract controller
+            tokenIdHex:
+              type: string
+              description: Token ID Code
+            versionType:
+              type: integer
+              description: QAE version (1 or 2)
+            genesis_timestamp:
+              type: string
+              format: date-time
+              description: Datetime token was created
+            genesis_timestamp_unix:
+              type: integer
+              description: Unix timestamp token was created
+            symbol:
+              type: string
+              description: Ticker code for token
+            name:
+              type: string
+              description: Token name
+            documentUri:
+              type: string
+              description: Generally a url pointing to token homepage
+            decimals:
+              type: integer
+              description: Number of decimal places this token has
+            genesisQuantity:
+              type: string
+              description: String formatted number of the genesis quantity in raw form (no decimals)
+            pausable:
+              type: boolean
+              description: Is the token pausable
+            mintable:
+              type: boolean
+              description: Can additional tokens be minted
+        tokenStats:
+          type: object
+          properties:
+            schema_version:
+              type: integer
+              description: Schema Version Number
+            block_created_height:
+              type: integer
+              description: Block height the token was created at
+            block_created_id:
+              type: string
+              description: Block ID/Hash the token was created in
+            block_last_active_send:
+              type: integer
+              description: Block height of last token transfer
+            block_last_active_mint:
+              type: integer
+              description: Block height of last mint action
+            creation_transaction_id:
+              type: string
+              description: Transaction ID the token was created with
+            qty_valid_txns_since_genesis:
+              type: integer
+              description: Number of transactions on network since token created
+            qty_valid_token_addresses:
+              type: integer
+              description: Number of addresses that have made transactions with this token
+            qty_token_minted:
+              type: string
+              description: String formatted number of total tokens minted in raw form (no decimals)
+            qty_token_burned:
+              type: string
+              description: String formatted number of total tokens burned in raw form (no decimals)
+            qty_token_circulating_supply:
+              type: string
+              description: String formatted number of total tokens in circulation in raw form (no decimals)
+            qty_xqr_spent:
+              type: string
+              description: String formatted number of total XQR spend for all transactions in raw form (no decimals)
+        lastUpdatedBlock:
+          type: integer
+          description: Last block height a transaction has occurred for this token
+        metadata:
+          type: array
+          items: 
+            type: object
+            properties:
+              schema:
+                $ref: '#/components/schemas/MetaData'
+    AddressQAE1:
+      type: object
+      properties:
+        schema_version:
+          type: integer
+          description: Schema Version
+        recordId: 
+          type: string
+          description: Unique record id for address/tokenid
+        address: 
+          type: string
+          description: Qredit address
+        tokenIdHex: 
+          type: string
+          description: Token ID
+        isOwner: 
+          type: boolean
+          description: Is token owner
+        tokenBalance: 
+          type: string
+          description: Number string of current balance in raw form (no decimals)
+        tokenDecimals: 
+          type: integer
+          description: Number of decimals the token has
+        lastUpdatedBlock:
+          type: integer
+          description: Last transaction block height for this record
+        isActive:
+          type: boolean
+          description: Is active for sending
+    AddressQAE2:
+      type: object
+      properties:
+        schema_version:
+          type: integer
+          description: Schema Version
+        recordId: 
+          type: string
+          description: Unique record id for address/tokenid
+        address: 
+          type: string
+          description: Qredit address
+        tokenIdHex: 
+          type: string
+          description: Token ID
+        isOwner: 
+          type: boolean
+          description: Is token owner
+        isMetaAuth: 
+          type: boolean
+          description: Can address add metadata to token
+        lastUpdatedBlock:
+          type: integer
+          description: Last transaction block height for this record
+        isActive:
+          type: boolean
+          description: Is active for sending
+    TransactionQAE1:
+      type: object
+      properties:
+        schema_version: 
+          type: integer
+        txid: 
+          type: string
+        blockId: 
+          type: string
+        blockHeight: 
+          type: integer
+        valid: 
+          type: boolean
+        invalidReason: 
+          type: string
+        transactionDetails: 
+          type: object
+          properties:
+            schema:
+              $ref: '#/components/schemas/TransactionDetailsQAE1'
+    TransactionDetailsQAE1:
+      type: object
+      properties:
+        schema_version: 
+          type: integer
+        transactionType: 
+          type: string
+        senderAddress: 
+          type: string
+        tokenIdHex: 
+          type: string
+        versionType: 
+          type: integer
+        timestamp: 
+          type: string
+          format: date-time
+        timestamp_unix: 
+          type: integer
+        symbol: 
+          type: string
+        name: 
+          type: string
+        documentUri: 
+          type: string
+        decimals: 
+          type: integer
+        genesisOrMintQuantity: 
+          type: string
+        sendOutput: 
+          type: object
+          properties:
+            schema:
+              $ref: '#/components/schemas/TransactionOutputQAE1'
+        note: 
+          type: string
+        amount_xqr: 
+          type: string
+        fee_xqr: 
+          type: string
+    TransactionOutputQAE1:
+      type: object
+      properties:
+        schema_version: 
+          type: integer
+        address: 
+          type: string
+        amount:
+          type: string
+    TransactionQAE2:
+      type: object
+      properties:
+        schema_version: 
+          type: integer
+        txid: 
+          type: string
+        blockId: 
+          type: string
+        blockHeight: 
+          type: integer
+        valid: 
+          type: boolean
+        invalidReason: 
+          type: string
+        transactionDetails: 
+          type: object
+          properties:
+            schema:
+              $ref: '#/components/schemas/TransactionDetailsQAE2'
+    TransactionDetailsQAE2:
+      type: object
+      properties:
+        schema_version: 
+          type: integer
+        transactionType: 
+          type: string
+        senderAddress: 
+          type: string
+        tokenIdHex: 
+          type: string
+        versionType: 
+          type: integer
+        timestamp: 
+          type: string
+          format: date-time
+        timestamp_unix: 
+          type: integer
+        symbol: 
+          type: string
+        name: 
+          type: string
+        documentUri: 
+          type: string
+        note: 
+          type: string
+        amount_xqr: 
+          type: string
+        fee_xqr: 
+          type: string
+    MetaData:
+      type: object
+      properties:
+        schema_version: 
+          type: integer
+        txid: 
+          type: string
+        blockId: 
+          type: string
+        blockHeight: 
+          type: integer
+        metaDetails: 
+          type: object
+          properties:
+            schema:
+              $ref: '#/components/schemas/MetaDetails'
+        void:
+          type: boolean
+    MetaDetails:
+      type: object
+      properties:
+        schema_version: 
+          type: integer
+        posterAddress: 
+          type: string
+        tokenIdHex: 
+          type: string
+        timestamp: 
+          type: string
+        timestamp_unix: 
+          type: integer
+        metaName: 
+          type: string
+        metaChunk: 
+          type: integer
+        metaData: 
+          type: string
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+            message:
+              type: string
+              enum:
+              - Internal Server Error
+              - Gateway Timeout
+              - Service Unavailable
+              - Symbol not found
+              - Authorisation required
+              - Authorisation failed
+              - Validation error
+              - Insufficient funds
+            description:
+              type: string

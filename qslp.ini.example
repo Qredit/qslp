@@ -1,0 +1,23 @@
+mongo_connection_string = 'mongodb://localhost:27017'
+mongo_database = 'qreditslt'
+
+pg_username = ''
+pg_password = ''
+pg_database = ''
+
+redis_port = 6379
+redis_host = '127.0.0.1'
+
+api_port = 9876
+
+seed_node = 'https://qslp.qredit.cloud/api/'
+api_node = 'https://qredit.cloud/api/v2'
+
+webhooks_enabled = 1
+webhook_node = 'http://127.0.0.1:5104/api'
+
+scanlock_staletime = 300
+polling_interval = 120
+
+error_from_email = ''
+error_to_email = ''
