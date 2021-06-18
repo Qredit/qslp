@@ -1,5 +1,5 @@
 mongo_connection_string = 'mongodb://localhost:27017'
-mongo_database = 'qreditslt'
+mongo_database = 'qreditslp'
 
 pg_username = ''
 pg_password = ''
