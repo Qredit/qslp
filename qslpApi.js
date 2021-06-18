@@ -1926,8 +1926,8 @@ function initialize() {
 		getSeedPeers();
 
 		// Defaults qm2/qm3
-		validatePeer('95.217.180.3', 80);
-		validatePeer('116.203.40.82', 80);
+		validatePeer('127.0.0.1', 8001);
+		validatePeer('127.0.0.1', 8002);
 
 	})();
 
