@@ -67,7 +67,7 @@ const setAsync = promisify(rclient.set).bind(rclient);
 const delAsync = promisify(rclient.del).bind(rclient);
 
 // QSLP-1 Token Schema
-const QSLPSchema = require("./lib/QSLPSchema");
+const QSLPSchema = require("./lib/qslpSchema");
 const qslp = new QSLPSchema.default();
 
 const QSLPactivationHeight = 2859480;
