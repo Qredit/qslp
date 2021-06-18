@@ -54,7 +54,7 @@ const mongoconnecturl = iniconfig.mongo_connection_string;
 const mongodatabase = iniconfig.mongo_database;
 
 // MongoDB Library
-const QSLPDB = require("./lib/QSLPDB");
+const QSLPDB = require("./lib/qslpDB");
 const qdb = new QSLPDB.default(mongoconnecturl, mongodatabase);
 
 // Connect to Redis and setup some async call definitions
