@@ -71,7 +71,7 @@ const QSLPSchema = require("./lib/qslpSchema");
 const qslp = new QSLPSchema.default();
 
 const QSLPactivationHeight = 1579800;
-const QSLPactivationBlockId = 'c36c7920a5194e67c646145c54051d22f9b2f192cf458da8683e34af4a1582ac';
+const QSLPactivationBlockId = '2d807820a21846be886e7cc96c1ce889b02a23db0d2d47113b80927c263276e6';
 
 // Declaring some variable defaults
 
