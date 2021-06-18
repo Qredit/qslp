@@ -29,7 +29,7 @@ const { Client } = require('pg');				 // Postgres
 const qreditjs = require("qreditjs");
 const path = require('path');
 
-var iniconfig = ini.parse(fs.readFileSync('/qslp.ini', 'utf-8'))
+var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
 
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;

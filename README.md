@@ -31,8 +31,7 @@ Clone the repository and setup config:
 
 ```
 npm install
-mkdir /etc/qslp/
-cp qslp.ini.example /etc/qslp/qslp.ini
+cp qslp.ini.example qslp.ini
 ```
 
 Run the programs:
