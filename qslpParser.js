@@ -70,7 +70,7 @@ const delAsync = promisify(rclient.del).bind(rclient);
 const QSLPSchema = require("./lib/qslpSchema");
 const qslp = new QSLPSchema.default();
 
-const QSLPactivationHeight = 2859480;
+const QSLPactivationHeight = 1579800;
 const QSLPactivationBlockId = 'c36c7920a5194e67c646145c54051d22f9b2f192cf458da8683e34af4a1582ac';
 
 // Declaring some variable defaults

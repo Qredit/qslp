@@ -41,8 +41,8 @@ qslpApi.js - The API interface to the QSLP system
 qslpParser.js - The Qredit block parser
 
 ```
-pm2 qslpApi.js
-pm2 qslpParser.js
+pm2 start qslpApi.js
+pm2 start qslpParser.js
 ```
 
 The server runs on the port set in the ini file.   If you want to run on a port < 1000, you'll need to run qslpApi.js with sudo
