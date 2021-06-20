@@ -8,6 +8,7 @@
     "url": "git+https://github.com/qredit/qslp.git"
   },
   "dependencies": {
+    "@qredit/crypto": "^2.7.27",
     "assert": "^2.0.0",
     "async": "^3.1.0",
     "basic-auth": "^2.0.1",
@@ -27,7 +28,6 @@
     "npm": "^6.13.4",
     "pg": "^7.17.0",
     "public-ip": "^3.2.0",
-    "qreditjs": "git+https://github.com/Qredit/qredit-js.git",
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
