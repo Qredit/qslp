@@ -1,7 +1,7 @@
 {
   "name": "qslpApi",
-  "version": "0.0.2",
-  "description": "This package file is for all the dependencies for the Qredit Simple Ledger Protocol API",
+  "version": "2.0.0",
+  "description": "This package file is for all the dependencies for the Qredit Side Ledger Protocol API",
   "main": "qslpApi.js",
   "repository": {
     "type": "git",

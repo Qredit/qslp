@@ -1,16 +1,28 @@
 # QSLP  -- Version 2.0.0
-Qredit Simple Ledger Protocol - An easy to use token system for both fungible QSLP-1 and QSLP-2 non-fungible tokens.
+Qredit Side Ledger Protocol - An easy to use token system for both fungible QSLP-1 and QSLP-2 non-fungible tokens.
 
 This is a sidechain for the Qredit network to integrate Simple Token issuance and management
 
 This must be running on a Qredit Relay or Qredit Full node.
 
-Install Mongodb & Redis:  (Default settings are fine for testing)
+Install NodeJS
+```
+sudo apt update
+sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt -y install nodejs
+```
+
+Install PM2
+```
+npm -g install pm2
+```
+
+Install Mongodb & Redis:  (Default settings are fine)
 
 ```
 apt-get install mongodb
 apt-get install redis-server
-
 ```
 
 Enable Webhooks in your Qredit Node:
@@ -34,17 +46,18 @@ npm install
 cp qslp.ini.example qslp.ini
 ```
 
-Run the programs:
+Open port 5190 and run the programs:
 
 qslpApi.js - The API interface to the QSLP system
 qslpParser.js - The Qredit block parser
 
 ```
+ufw allow 5190
 pm2 start qslpApi.js
 pm2 start qslpParser.js
 ```
 
-The server runs on the port set in the ini file.   If you want to run on a port < 1000, you'll need to run qslpApi.js with sudo
+The server runs on the port set in the ini file.   If you want to run on a port < 1000, you'll need to run qslpApi.js with sudo or use Nginx proxy
 
 Currently the system supports the QSLP contract schema (v15).   QSLP contract schema (v15) is currently in development.
 

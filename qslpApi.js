@@ -1,8 +1,8 @@
 /*
 *
-* qslp - Version 1.1.1
+* qslp - Version 2.0.0
 *
-* Qredit Always Evolving
+* Qredit Side Ledger Protocol
 *
 * A simplified token management system for the Qredit network
 *
@@ -62,6 +62,9 @@ var webhookVerification = '';
 // Trusted seed node
 var seedNode = iniconfig.seed_node;
 
+// Delegate Qredit Address
+var delegateAddress = iniconfig.delegate_address || null;
+
 // Let us know when we connect or have an error with redis
 rclient.on('connect', function () {
 	console.log('Connected to Redis');
@@ -91,8 +94,25 @@ var router = express.Router();
 
 // a test route to make sure everything is working (accessed at GET http://ip:port/api)
 router.get('/', function (req, res) {
-	res.json({ message: 'Qredit Always Evolving....	 Please see our API documentation' });
+
+	var thisPeer = myIPAddress + ":" + port;
+
+	res.json({ message: 'Qredit Side Ledger Protocol....	 Please see our API documentation here http://' + thisPeer });
+
 });
+
+router.route('/delegateaddress')
+	.get(function (req, res) {
+
+		updateaccessstats(req);
+
+		var thisPeer = myIPAddress + ":" + port;
+
+		message = { peerIP: thisPeer, delegateAddress: delegateAddress };
+
+		res.json(message);
+
+	});
 
 router.route('/status')
 	.get(function (req, res) {
@@ -806,14 +826,16 @@ router.route('/getRingSignature/:journalid')
 
 				var ringsignature = crypto.createHash('sha256').update(myIPAddress + dbreply.chainHash).digest('hex');
 
-				message = { ip: myIPAddress, port: parseInt(port), journalid: journalid, ringsignature: ringsignature };
+				message = { ip: myIPAddress, port: parseInt(port), journalid: journalid, ringsignature: ringsignature, height: dbreply.blockHeight };
 
 				res.json(message);
 
 			}
 			else {
 
-				message = { ip: myIPAddress, port: parseInt(port), journalid: journalid, ringsignature: '', error: 'Signature Not Found' };
+				var findLastJournal = await qdbapi.findDocumentsWithId('journal', {}, 1, { "_id": -1 }, 0);
+
+				message = { ip: myIPAddress, port: parseInt(port), journalid: findLastJournal._id, ringsignature: '', height: findLastJournal.blockHeight, error: 'Signature Not Found' };
 
 				res.json(message);
 
@@ -848,14 +870,16 @@ router.route('/getRingSignature/:journalid/:callerport')
 
 				var ringsignature = crypto.createHash('sha256').update(myIPAddress + dbreply.chainHash).digest('hex');
 
-				message = { ip: myIPAddress, port: parseInt(port), journalid: journalid, ringsignature: ringsignature };
+				message = { ip: myIPAddress, port: parseInt(port), journalid: journalid, ringsignature: ringsignature, height: dbreply.blockHeight };
 
 				res.json(message);
 
 			}
 			else {
 
-				message = { ip: myIPAddress, port: parseInt(port), journalid: journalid, ringsignature: '', error: 'Signature Not Found' };
+				var findLastJournal = await qdbapi.findDocumentsWithId('journal', {}, 1, { "_id": -1 }, 0);
+
+				message = { ip: myIPAddress, port: parseInt(port), journalid: findLastJournal._id, ringsignature: '', height: findLastJournal.blockHeight, error: 'Signature Not Found' };
 
 				res.json(message);
 
@@ -1926,11 +1950,11 @@ function initialize() {
 		getSeedPeers();
 
 		// Defaults qm2/qm3
-		validatePeer('95.217.235.75', 8001);
-		validatePeer('116.203.70.214', 8001);
-		validatePeer('78.47.141.58', 8001);
-		validatePeer('135.181.106.105', 8001);
-		validatePeer('95.217.186.135', 8001);
+		validatePeer('95.217.235.75', 5190);
+		validatePeer('116.203.70.214', 5190);
+		validatePeer('78.47.141.58', 5190);
+		validatePeer('135.181.106.105', 5190);
+		validatePeer('95.217.186.135', 5190);
 
 	})();
 
@@ -1971,7 +1995,7 @@ function validatePeer(peerip, peerport) {
 
 		qdbapi.close();
 
-		if (dbreply) {
+		if (dbreply && dbreply.length > 0) {
 
 			var journalid = dbreply[0]['_id'];
 			var chainhash = dbreply[0]['chainHash'];
@@ -2004,7 +2028,7 @@ function validatePeer(peerip, peerport) {
 							console.log("Ring sig validated for peer: " + peerip + ":" + peerport);
 
 							// Validated
-							goodPeers[peerip + ":" + peerport] = { ip: peerip, port: peerport, lastJournalId: journalid };
+							goodPeers[peerip + ":" + peerport] = { ip: peerip, port: peerport, lastJournalId: journalid, height: body.height };
 							delete unvalidatedPeers[peerip + ":" + peerport];
 							delete badPeers[peerip + ":" + peerport];
 							getPeers(peerip + ":" + peerport);
@@ -2014,7 +2038,7 @@ function validatePeer(peerip, peerport) {
 
 							delete goodPeers[peerip + ":" + peerport];
 							delete unvalidatedPeers[peerip + ":" + peerport];
-							badPeers[peerip + ":" + peerport] = { ip: peerip, port: peerport, lastJournalId: journalid };
+							badPeers[peerip + ":" + peerport] = { ip: peerip, port: peerport, lastJournalId: journalid, height: body.height };
 
 						}
 
@@ -2167,6 +2191,23 @@ function testPeers() {
 		validatePeer(peerdetails.ip, peerdetails.port);
 
 	});
+
+}
+
+function checkPeering() {
+
+	if (goodPeers.length == 0 && badPeers.length > 3) {
+
+		// Check if bad peers are in sync with each other, if so it's probably us thats bad...
+
+
+
+		// If they are in sync, then lets figure out where we need to resync from
+
+
+
+
+	}
 
 }
 

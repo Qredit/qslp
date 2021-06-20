@@ -8,7 +8,7 @@ pg_database = ''
 redis_port = 6379
 redis_host = '127.0.0.1'
 
-api_port = 9876
+api_port = 5190
 
 seed_node = 'https://qslp.qredit.cloud/api/'
 api_node = 'https://qredit.cloud/api/v2'

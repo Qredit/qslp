@@ -2,7 +2,7 @@
 *
 * QSLP - Version 2.0.0
 *
-* Qredit Always Evolving
+* Qredit Side Ledger Protocol
 *
 * A simplified token management system for the Qredit network
 *
@@ -20,7 +20,8 @@ const SparkMD5 = require('spark-md5');  		 // Faster than crypto for md5
 const { promisify } = require('util');			 // Promise functions
 const asyncv3 = require('async');			 // Async Helper
 const { Client } = require('pg');				 // Postgres
-const qreditjs = require("qreditjs");
+const { Transactions: QreditTransactions, Managers: QreditManagers, Utils: QreditUtils, Identities: QreditIdentities } = require("@qredit/crypto");
+
 
 const { onShutdown } = require('node-graceful-shutdown');
 
@@ -47,7 +48,7 @@ onShutdown("parser", async function () {
 
 });
 
-var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
+var iniconfig = ini.parse(fs.readFileSync('/etc/qslp/qslp.ini', 'utf-8'))
 
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
@@ -242,19 +243,39 @@ function downloadChain() {
 
 	(async () => {
 
-		var pgclient = new Client({ user: iniconfig.pg_username, database: iniconfig.pg_database, password: iniconfig.pg_password });
-		await pgclient.connect()
-		var message = await pgclient.query('SELECT * FROM blocks ORDER BY height DESC LIMIT 1')
-		await pgclient.end()
+		var doresync = await getAsync('QSLP_resyncfromjournalheight');
 
+		if (doresync != null) {
 
-		var topHeight = 0;
-		if (message && message.rows && message.rows[0].height) {
-			var topHeight = message.rows[0].height;
-			lastBlockId = message.rows[0].id;
+			// out of sync with peers...
+
+			var mclient = await qdb.connect();
+			qdb.setClient(mclient);
+
+			await rebuildDbFromJournal(parseInt(doresync), qdb);
+
+			await delAsync('QSLP_resyncfromjournalheight');
+
+			await qdb.close();
+
 		}
+		else {
 
-		console.log('Qredit Current Top Height #' + topHeight + '.....');
+			var pgclient = new Client({ user: iniconfig.pg_username, database: iniconfig.pg_database, password: iniconfig.pg_password });
+			await pgclient.connect()
+			var message = await pgclient.query('SELECT * FROM blocks ORDER BY height DESC LIMIT 1')
+			await pgclient.end()
+
+
+			var topHeight = 0;
+			if (message && message.rows && message.rows[0].height) {
+				var topHeight = message.rows[0].height;
+				lastBlockId = message.rows[0].id;
+			}
+
+			console.log('Qredit Current Top Height #' + topHeight + '.....');
+
+		}
 
 		scanLock = false;
 		scanLockTimer = 0;
@@ -273,11 +294,124 @@ function syncJournalFromPeer() {
 
 }
 
-function rebuildDbFromJournal() {
+function rebuildDbFromJournal(journalHeight, qdb) {
 
+	return new Promise((resolve) => {
 
+		(async () => {
 
+			var startTime = (new Date()).getTime();
 
+			try {
+
+				// Remove Journal Entries above the rollback	
+				await qdb.removeDocuments('journal', { "blockHeight": { $gte: journalHeight } });
+
+				// Remove all tokens
+				await qdb.removeDocuments('tokens', {});
+
+				// Remove all addresses
+				await qdb.removeDocuments('addresses', {});
+
+				// Remove all transactions
+				await qdb.removeDocuments('transactions', {});
+
+				// Remove all metadata
+				await qdb.removeDocuments('metadata', {});
+
+				// Remove all counters
+				await qdb.removeDocuments('counters', {});
+
+				// Get last journal entry after pruning			
+				var findLastJournal = await qdb.findDocumentsWithId('journal', {}, 1, { "_id": -1 }, 0);
+
+				var lastJournalEntry = findLastJournal[0];
+
+				var lastJournalID = lastJournalEntry['_id'];
+				var lastJournalBlockId = lastJournalEntry['blockId'];
+				var lastJournalBlockHeight = lastJournalEntry['blockHeight'];
+
+				console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
+
+				// Update Counters to new top Journal
+				await qdb.updateDocument('counters', { "_id": "journal" }, { "seq": lastJournalID });
+
+				// Rebuild DB via Journal
+
+				var jLimit = 1000;
+				var jStart = 0;
+				var jContinue = 1;
+
+				while (jContinue == 1) {
+
+					var getJournals = await qdb.findDocumentsWithId('journal', {}, jLimit, { "_id": 1 }, jStart);
+
+					console.log('Rebuilding ' + getJournals.length + ' Journal Entries....');
+
+					jStart = jStart + jLimit;
+					if (getJournals.length == 0) jContinue = 0;
+
+					for (ji = 0; ji < getJournals.length; ji++) {
+
+						var journalItem = getJournals[ji];
+
+						var journalAction = journalItem['action'];
+						var journalCollection = journalItem['collectionName'];
+						var journalField = JSON.parse(journalItem['fieldData']);
+						var journalRecord = JSON.parse(journalItem['recordData']);
+
+						if (journalAction == 'insert') {
+
+							await qdb.insertDocument(journalCollection, journalRecord);
+
+						}
+						else if (journalAction == 'update') {
+
+							await qdb.updateDocument(journalCollection, journalField, journalRecord);
+
+						}
+						else {
+							console.log('UNKNOWN Journal Action - FATAL');
+
+							rclient.del('QSLP_lastblockid', function (err, reply) {
+								rclient.del('QSLP_lastscanblock', function (err, reply) {
+									process.exit(-1);
+								});
+							});
+
+						}
+
+					}
+
+				}
+
+				console.log('Journal Rebuild Completed..');
+
+			} catch (e) {
+
+				console.log('Error During Rollback - FATAL');
+				console.log(e);
+
+				rclient.del('QSLP_lastblockid', function (err, reply) {
+					rclient.del('QSLP_lastscanblock', function (err, reply) {
+						process.exit(-1);
+					});
+				});
+
+			}
+
+			await setAsync('QSLP_lastscanblock', lastJournalBlockHeight);
+			await setAsync('QSLP_lastblockid', lastJournalBlockId);
+
+			var endTime = (new Date()).getTime();
+
+			var elapsedTime = (endTime - startTime) / 1000;
+
+			console.log('Rollback completed in ' + elapsedTime + ' seconds');
+
+		})();
+
+	});
 
 }
 
@@ -380,18 +514,34 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 								if (lastBlockId != previousblockid && thisblockheight > 1) {
 
-									console.log('Error:	 Last Block ID is incorrect!  Rescan Required!');
+									// New code attempts a rollback
 
-									console.log("Expected: " + previousblockid);
-									console.log("Received: " + lastBlockId);
-									console.log("ThisBlockHeight: " + thisblockheight);
-									console.log("LastScanBlock: " + count);
+									var rollbackHeight = thisblockheight - 5;
+									if (rollbackHeight < 0) {
 
-									rclient.del('QSLP_lastblockid', function (err, reply) {
-										rclient.del('QSLP_lastscanblock', function (err, reply) {
-											process.exit(-1);
+										console.log('Error:	 Last Block ID is incorrect!  Rescan Required!');
+
+										console.log("Expected: " + previousblockid);
+										console.log("Received: " + lastBlockId);
+										console.log("ThisBlockHeight: " + thisblockheight);
+										console.log("LastScanBlock: " + count);
+
+										rclient.del('QSLP_lastblockid', function (err, reply) {
+											rclient.del('QSLP_lastscanblock', function (err, reply) {
+												process.exit(-1);
+											});
 										});
-									});
+
+									}
+									else {
+
+										console.log('Error:	 Last Block ID is incorrect!  Attempting to rollback 5 blocks!');
+
+										await rebuildDbFromJournal(rollbackHeight, qdb);
+
+										process.exit(-1);
+
+									}
 
 								}
 
@@ -424,7 +574,8 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 													txdata.type = origtxdata.type;
 													txdata.amount = origtxdata.amount;
 													txdata.fee = origtxdata.fee;
-													txdata.sender = qreditjs.crypto.getAddress(origtxdata.sender_public_key);
+													//txdata.sender = qreditjs.crypto.getAddress(origtxdata.sender_public_key);
+													txdata.sender = QreditIdentities.Address.fromPublicKey(origtxdata.sender_public_key);
 													txdata.senderPublicKey = origtxdata.sender_public_key;
 													txdata.recipient = origtxdata.recipient_id
 													if (origtxdata.vendor_field != null && origtxdata.vendor_field != '') {
@@ -456,7 +607,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 															var parsejson = JSON.parse(txdata.vendorField);
 
-															if (parsejson.QSLP1) {
+															if (parsejson.qslp1) {
 
 																console.log(txdata);
 
@@ -474,7 +625,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 																}
 
 															}
-															else if (parsejson.QSLP2) {
+															else if (parsejson.qslp2) {
 
 																console.log(txdata);
 
