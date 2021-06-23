@@ -1,3 +1,5 @@
 node_modules/
 .DS_Store
 qslp.ini
+*.swp
+*.swo
