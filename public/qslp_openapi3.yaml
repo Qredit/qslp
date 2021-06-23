@@ -1,10 +1,10 @@
 openapi: 3.0.1
 info:
-  title: QAE API
+  title: QSLP API
   description: |
-    API Documentation for the QAE v1 & v2 API
+    API Documentation for the QSLP v1 & v2 API
     <h4>API Endpoint URL</h4>
-    The endpoint for our REST API is:  <code>https://qae.qredit.cloud/api</code>
+    The endpoint for our REST API is:  <code>https://qslp.qredit.cloud/api</code>
     <br /><br />
     <h4>Datetime Formatting</h4>
     Unless otherwise stated, all timestamps are returned in ISO8601 format in UTC. Example: "2018-04-01T00:00:00Z" or "2018-04-01T00:00:00.000Z".   If a timestamp is returned as an Integer, then that is a Unix timestamp.
@@ -83,15 +83,15 @@ info:
     </table>
   version: 1.0.2
 servers:
-- url: https://qae.qredit.cloud/api
+- url: https://qslp.qredit.cloud/api
 paths:
   /status:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get system status
       description: |
-        Get a some basic information about the QAE system status
+        Get a some basic information about the QSLP system status
       responses:
         200:
           description: Status Info
@@ -102,7 +102,7 @@ paths:
   /tokens:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get a listing of tokens
       parameters:
       - name: limit
@@ -133,7 +133,7 @@ paths:
   /token/{id}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get token info
       parameters:
       - name: id
@@ -158,7 +158,7 @@ paths:
   /tokenByTxid/{txid}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get token info by transaction id of creation
       parameters:
       - name: txid
@@ -183,7 +183,7 @@ paths:
   /tokensByOwner/{address}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get token info by address of owner
       parameters:
       - name: address
@@ -210,7 +210,7 @@ paths:
   /tokenWithMeta/{id}:
     get:
       tags:
-      - QAE2
+      - QSLP2
       summary: Get token info with meta data
       parameters:
       - name: id
@@ -235,7 +235,7 @@ paths:
   /addresses:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get a listing of token addresses
       parameters:
       - name: limit
@@ -268,7 +268,7 @@ paths:
   /addresses/{address}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get all tokens for an address
       parameters:
       - name: address
@@ -297,7 +297,7 @@ paths:
   /addressesByTokenId/{tokenid}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get all addresses for a token
       parameters:
       - name: tokenid
@@ -326,7 +326,7 @@ paths:
   /balance/{tokenid}/{address}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get human readable balance for address/tokenid
       parameters:
       - name: tokenid
@@ -358,7 +358,7 @@ paths:
   /transaction/{txid}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get a listing of tokens
       parameters:
       - name: txid
@@ -385,7 +385,7 @@ paths:
   /transactions/{tokenid}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get a listing of transactions
       parameters:
       - name: tokenid
@@ -414,7 +414,7 @@ paths:
   /transactions/{tokenid}/{address}:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get a listing of transactions
       parameters:
       - name: tokenid
@@ -449,7 +449,7 @@ paths:
   /transactions:
     get:
       tags:
-      - QAE1/QAE2
+      - QSLP1/QSLP2
       summary: Get a listing of transactions
       parameters:
       - name: limit
@@ -482,7 +482,7 @@ paths:
   /metadata/{txid}:
     get:
       tags:
-      - QAE2
+      - QSLP2
       summary: Get metadata by txid
       parameters:
       - name: txid
@@ -509,7 +509,7 @@ paths:
   /metadata/{tokenid}:
     get:
       tags:
-      - QAE2
+      - QSLP2
       summary: Get metadata by token id
       parameters:
       - name: tokenid
@@ -546,7 +546,7 @@ paths:
   /metadata/{tokenid}/{address}:
     get:
       tags:
-      - QAE2
+      - QSLP2
       summary: Get metadata by token id & poster address
       parameters:
       - name: tokenid
@@ -589,8 +589,8 @@ paths:
   /vendor_qae1_genesis:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:GENESIS
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:GENESIS
       parameters:
       - name: decimals
         in: query
@@ -651,8 +651,8 @@ paths:
   /vendor_qae1_burn:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:BURN
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:BURN
       parameters:
       - name: tokenid
         in: query
@@ -687,8 +687,8 @@ paths:
   /vendor_qae1_mint:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:MINT
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:MINT
       parameters:
       - name: tokenid
         in: query
@@ -723,8 +723,8 @@ paths:
   /vendor_qae1_send:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:SEND
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:SEND
       parameters:
       - name: tokenid
         in: query
@@ -759,8 +759,8 @@ paths:
   /vendor_qae1_pause:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:PAUSE
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:PAUSE
       parameters:
       - name: tokenid
         in: query
@@ -789,8 +789,8 @@ paths:
   /vendor_qae1_resume:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:RESUME
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:RESUME
       parameters:
       - name: tokenid
         in: query
@@ -819,8 +819,8 @@ paths:
   /vendor_qae1_newowner:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:NEWOWNER
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:NEWOWNER
       parameters:
       - name: tokenid
         in: query
@@ -849,8 +849,8 @@ paths:
   /vendor_qae1_freeze:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:FREEZE
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:FREEZE
       parameters:
       - name: tokenid
         in: query
@@ -879,8 +879,8 @@ paths:
   /vendor_qae1_unfreeze:
     get:
       tags:
-      - VendorField QAE1
-      summary: Generate VendorField JSON String for QAE1:UNFREEZE
+      - VendorField QSLP1
+      summary: Generate VendorField JSON String for QSLP1:UNFREEZE
       parameters:
       - name: tokenid
         in: query
@@ -909,8 +909,8 @@ paths:
   /vendor_qae2_genesis:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:GENESIS
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:GENESIS
       parameters:
       - name: symbol
         in: query
@@ -954,8 +954,8 @@ paths:
   /vendor_qae2_pause:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:PAUSE
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:PAUSE
       parameters:
       - name: tokenid
         in: query
@@ -984,8 +984,8 @@ paths:
   /vendor_qae2_resume:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:RESUME
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:RESUME
       parameters:
       - name: tokenid
         in: query
@@ -1014,8 +1014,8 @@ paths:
   /vendor_qae2_newowner:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:NEWOWNER
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:NEWOWNER
       parameters:
       - name: tokenid
         in: query
@@ -1044,8 +1044,8 @@ paths:
   /vendor_qae2_authmeta:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:AUTHMETA
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:AUTHMETA
       parameters:
       - name: tokenid
         in: query
@@ -1074,8 +1074,8 @@ paths:
   /vendor_qae2_revokemeta:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:REVOKEMETA
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:REVOKEMETA
       parameters:
       - name: tokenid
         in: query
@@ -1104,8 +1104,8 @@ paths:
   /vendor_qae2_clone:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:CLONE
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:CLONE
       parameters:
       - name: tokenid
         in: query
@@ -1134,8 +1134,8 @@ paths:
   /vendor_qae2_addmeta:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:ADDMETA
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:ADDMETA
       parameters:
       - name: tokenid
         in: query
@@ -1174,8 +1174,8 @@ paths:
   /vendor_qae2_voidmeta:
     get:
       tags:
-      - VendorField QAE2
-      summary: Generate VendorField JSON String for QAE2:VOIDMETA
+      - VendorField QSLP2
+      summary: Generate VendorField JSON String for QSLP2:VOIDMETA
       parameters:
       - name: tokenid
         in: query
@@ -1211,7 +1211,7 @@ components:
           description: Blocks Downloaded
         ScannedBlocks:
           type: integer
-          description: Blocks Scanned into QAE
+          description: Blocks Scanned into QSLP
     Token:
       type: object
       properties:
@@ -1220,7 +1220,7 @@ components:
           description: Schema Version
         type:
           type: string
-          description: QAE1 or QAE2
+          description: QSLP1 or QSLP2
         paused:
           type: boolean
           description: token paused for activity
@@ -1237,7 +1237,7 @@ components:
               description: Token ID Code
             versionType:
               type: integer
-              description: QAE version (1 or 2)
+              description: QSLP version (1 or 2)
             genesis_timestamp:
               type: string
               format: date-time
@@ -1316,7 +1316,7 @@ components:
           description: Schema Version
         type:
           type: string
-          description: QAE2
+          description: QSLP2
         paused:
           type: boolean
           description: token paused for activity
@@ -1333,7 +1333,7 @@ components:
               description: Token ID Code
             versionType:
               type: integer
-              description: QAE version (1 or 2)
+              description: QSLP version (1 or 2)
             genesis_timestamp:
               type: string
               format: date-time
