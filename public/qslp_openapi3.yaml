@@ -257,8 +257,8 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/AddressQAE1'
-                  - $ref: '#/components/schemas/AddressQAE2'
+                  - $ref: '#/components/schemas/AddressQSLP1'
+                  - $ref: '#/components/schemas/AddressQSLP2'
         400:
           description: Address not found
           content:
@@ -286,8 +286,8 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/AddressQAE1'
-                  - $ref: '#/components/schemas/AddressQAE2'
+                  - $ref: '#/components/schemas/AddressQSLP1'
+                  - $ref: '#/components/schemas/AddressQSLP2'
         400:
           description: Address not found
           content:
@@ -315,8 +315,8 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/AddressQAE1'
-                  - $ref: '#/components/schemas/AddressQAE2'
+                  - $ref: '#/components/schemas/AddressQSLP1'
+                  - $ref: '#/components/schemas/AddressQSLP2'
         400:
           description: Address not found
           content:
@@ -374,8 +374,8 @@ paths:
             application/json:
               schema:
                 oneOf:
-                - $ref: '#/components/schemas/TransactionQAE1'
-                - $ref: '#/components/schemas/TransactionQAE2'
+                - $ref: '#/components/schemas/TransactionQSLP1'
+                - $ref: '#/components/schemas/TransactionQSLP2'
         400:
           description: Transaction not found
           content:
@@ -403,8 +403,8 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/TransactionQAE1'
-                  - $ref: '#/components/schemas/TransactionQAE2'
+                  - $ref: '#/components/schemas/TransactionQSLP1'
+                  - $ref: '#/components/schemas/TransactionQSLP2'
         400:
           description: Tokens not found
           content:
@@ -438,8 +438,8 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/TransactionQAE1'
-                  - $ref: '#/components/schemas/TransactionQAE2'
+                  - $ref: '#/components/schemas/TransactionQSLP1'
+                  - $ref: '#/components/schemas/TransactionQSLP2'
         400:
           description: Tokens not found
           content:
@@ -471,8 +471,8 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/TransactionQAE1'
-                  - $ref: '#/components/schemas/TransactionQAE2'
+                  - $ref: '#/components/schemas/TransactionQSLP1'
+                  - $ref: '#/components/schemas/TransactionQSLP2'
         400:
           description: Tokens not found
           content:
@@ -586,7 +586,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_genesis:
+  /vendor_qslp1_genesis:
     get:
       tags:
       - VendorField QSLP1
@@ -648,7 +648,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_burn:
+  /vendor_qslp1_burn:
     get:
       tags:
       - VendorField QSLP1
@@ -684,7 +684,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_mint:
+  /vendor_qslp1_mint:
     get:
       tags:
       - VendorField QSLP1
@@ -720,7 +720,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_send:
+  /vendor_qslp1_send:
     get:
       tags:
       - VendorField QSLP1
@@ -756,7 +756,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_pause:
+  /vendor_qslp1_pause:
     get:
       tags:
       - VendorField QSLP1
@@ -786,7 +786,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_resume:
+  /vendor_qslp1_resume:
     get:
       tags:
       - VendorField QSLP1
@@ -816,7 +816,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_newowner:
+  /vendor_qslp1_newowner:
     get:
       tags:
       - VendorField QSLP1
@@ -846,7 +846,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_freeze:
+  /vendor_qslp1_freeze:
     get:
       tags:
       - VendorField QSLP1
@@ -876,7 +876,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae1_unfreeze:
+  /vendor_qslp1_unfreeze:
     get:
       tags:
       - VendorField QSLP1
@@ -906,7 +906,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae2_genesis:
+  /vendor_qslp2_genesis:
     get:
       tags:
       - VendorField QSLP2
@@ -951,7 +951,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'                
-  /vendor_qae2_pause:
+  /vendor_qslp2_pause:
     get:
       tags:
       - VendorField QSLP2
@@ -981,7 +981,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae2_resume:
+  /vendor_qslp2_resume:
     get:
       tags:
       - VendorField QSLP2
@@ -1011,7 +1011,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae2_newowner:
+  /vendor_qslp2_newowner:
     get:
       tags:
       - VendorField QSLP2
@@ -1041,7 +1041,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae2_authmeta:
+  /vendor_qslp2_authmeta:
     get:
       tags:
       - VendorField QSLP2
@@ -1071,7 +1071,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae2_revokemeta:
+  /vendor_qslp2_revokemeta:
     get:
       tags:
       - VendorField QSLP2
@@ -1101,7 +1101,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae2_clone:
+  /vendor_qslp2_clone:
     get:
       tags:
       - VendorField QSLP2
@@ -1131,7 +1131,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae2_addmeta:
+  /vendor_qslp2_addmeta:
     get:
       tags:
       - VendorField QSLP2
@@ -1171,7 +1171,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /vendor_qae2_voidmeta:
+  /vendor_qslp2_voidmeta:
     get:
       tags:
       - VendorField QSLP2
@@ -1411,7 +1411,7 @@ components:
             properties:
               schema:
                 $ref: '#/components/schemas/MetaData'
-    AddressQAE1:
+    AddressQSLP1:
       type: object
       properties:
         schema_version:
@@ -1441,7 +1441,7 @@ components:
         isActive:
           type: boolean
           description: Is active for sending
-    AddressQAE2:
+    AddressQSLP2:
       type: object
       properties:
         schema_version:
@@ -1468,7 +1468,7 @@ components:
         isActive:
           type: boolean
           description: Is active for sending
-    TransactionQAE1:
+    TransactionQSLP1:
       type: object
       properties:
         schema_version: 
@@ -1487,8 +1487,8 @@ components:
           type: object
           properties:
             schema:
-              $ref: '#/components/schemas/TransactionDetailsQAE1'
-    TransactionDetailsQAE1:
+              $ref: '#/components/schemas/TransactionDetailsQSLP1'
+    TransactionDetailsQSLP1:
       type: object
       properties:
         schema_version: 
@@ -1520,14 +1520,14 @@ components:
           type: object
           properties:
             schema:
-              $ref: '#/components/schemas/TransactionOutputQAE1'
+              $ref: '#/components/schemas/TransactionOutputQSLP1'
         note: 
           type: string
         amount_xqr: 
           type: string
         fee_xqr: 
           type: string
-    TransactionOutputQAE1:
+    TransactionOutputQSLP1:
       type: object
       properties:
         schema_version: 
@@ -1536,7 +1536,7 @@ components:
           type: string
         amount:
           type: string
-    TransactionQAE2:
+    TransactionQSLP2:
       type: object
       properties:
         schema_version: 
@@ -1555,8 +1555,8 @@ components:
           type: object
           properties:
             schema:
-              $ref: '#/components/schemas/TransactionDetailsQAE2'
-    TransactionDetailsQAE2:
+              $ref: '#/components/schemas/TransactionDetailsQSLP2'
+    TransactionDetailsQSLP2:
       type: object
       properties:
         schema_version: 
