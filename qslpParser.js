@@ -48,7 +48,7 @@ onShutdown("parser", async function () {
 
 });
 
-var iniconfig = ini.parse(fs.readFileSync('/etc/qslp/qslp.ini', 'utf-8'))
+var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
 
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
