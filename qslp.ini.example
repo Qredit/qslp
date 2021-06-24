@@ -10,8 +10,8 @@ redis_host = '127.0.0.1'
 
 api_port = 8002
 
-seed_node = 'https://arkqslp.qredit.cloud/api/'
-api_node = 'https://api.ark.io/api/v2'
+api_node = 'https://arkqslp.qredit.cloud/api/'
+seed_node = 'https://api.ark.io/api/v2'
 
 webhooks_enabled = 1
 webhook_node = 'http://127.0.0.1:5004/api'
