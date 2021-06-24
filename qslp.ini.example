@@ -8,13 +8,13 @@ pg_database = ''
 redis_port = 6379
 redis_host = '127.0.0.1'
 
-api_port = 5190
+api_port = 8002
 
-seed_node = 'https://qslp.qredit.cloud/api/'
-api_node = 'https://qredit.cloud/api/v2'
+seed_node = 'https://arkqslp.qredit.cloud/api/'
+api_node = 'https://api.ark.io/api/v2'
 
 webhooks_enabled = 1
-webhook_node = 'http://127.0.0.1:5104/api'
+webhook_node = 'http://127.0.0.1:5004/api'
 
 scanlock_staletime = 300
 polling_interval = 120

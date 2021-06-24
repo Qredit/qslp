@@ -1949,12 +1949,17 @@ function initialize() {
 
 		getSeedPeers();
 
-		// Defaults qm2/qm3
-		validatePeer('95.217.235.75', 8001);
-		validatePeer('116.203.70.214', 8001);
-		validatePeer('78.47.141.58', 8001);
-		validatePeer('135.181.106.105', 8001);
-		validatePeer('95.217.186.135', 8001);
+		// arkslp.qredit.cloud
+		// arkqslp2.qredit.cloud
+		// arkqslp3.qredit.cloud
+		// arkqslp4.qredit.cloud
+		// arkqslp5.qredit.cloud
+
+		validatePeer('95.217.184.222', 8002);
+		validatePeer('135.181.151.134', 8002);
+		validatePeer('95.217.12.172', 8002);
+		validatePeer('95.216.171.167', 8002);
+		validatePeer('95.217.10.178', 8002);
 
 	})();
 
@@ -2293,4 +2298,3 @@ function error_handle(error, caller = 'unknown', severity = 'error') {
 	});
 
 }
-

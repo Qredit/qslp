@@ -71,8 +71,8 @@ const delAsync = promisify(rclient.del).bind(rclient);
 const QSLPSchema = require("./lib/qslpSchema");
 const qslp = new QSLPSchema.default();
 
-const QSLPactivationHeight = 1579800;
-const QSLPactivationBlockId = '2d807820a21846be886e7cc96c1ce889b02a23db0d2d47113b80927c263276e6';
+const QSLPactivationHeight = 16652790;
+const QSLPactivationBlockId = 'bbaa2702e5cef0f7800891d1c3089b35eca88a6d85c064a03e8ca637938ffc84';
 
 // Declaring some variable defaults
 
@@ -273,7 +273,7 @@ function downloadChain() {
 				lastBlockId = message.rows[0].id;
 			}
 
-			console.log('Qredit Current Top Height #' + topHeight + '.....');
+			console.log('Ark Current Top Height #' + topHeight + '.....');
 
 		}
 
@@ -515,7 +515,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 								if (lastBlockId != previousblockid && thisblockheight > 1) {
 
 									// New code attempts a rollback
-									
+
 									(async () => {
 
 										var rollbackHeight = thisblockheight - 5;
@@ -544,12 +544,11 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 											process.exit(-1);
 
 										}
-									
+
 									})();
 
 								}
-								else
-								{
+								else {
 
 									lastBlockId = blockidcode;
 
@@ -693,7 +692,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 										})();
 
 									}
-								
+
 								}
 
 							}
@@ -828,4 +827,3 @@ function error_handle(error, caller = 'unknown', severity = 'error') {
 	});
 
 }
-

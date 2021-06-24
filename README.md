@@ -77,7 +77,7 @@ UNFREEZE - UnFreeze balance for Token @ Address.
 
 JSON Variables:
 
-GENESIS:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+GENESIS:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 de = Decimal Places  (Integer: 0-8)
@@ -90,7 +90,7 @@ pa = Pausable (Boolean:  Default false)  (Optional)
 mi = Mintable (Boolean:  Default false)  (Optional)
 ```
 
-BURN:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+BURN:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -98,7 +98,7 @@ qt = Quantity (Integer)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-MINT:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+MINT:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -114,14 +114,14 @@ qt = Quantity (Integer)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-PAUSE:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+PAUSE:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-RESUME:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+RESUME:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -166,7 +166,7 @@ VOIDMETA - Mark a previously added meta data as void
 
 JSON Variables:
 
-GENESIS:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+GENESIS:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 sy = Symbol / Ticker  (String: 3-8 characters)
@@ -176,14 +176,14 @@ no = Notes  (String: Max 32 Characters)  (Optional)
 pa = Pausable (Boolean:  Default false)  (Optional)
 ```
 
-PAUSE:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+PAUSE:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-RESUME:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+RESUME:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -210,14 +210,14 @@ id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-CLONE:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+CLONE:   (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional - Leaveing blank will copy notes from original, providing will create new notes)
 ```
 
-ADDMETA:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+ADDMETA:   (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -226,7 +226,7 @@ na = Name  (String: Max 32 Characters --  name of meta info)
 dt = Data  (String -- stringified data for your meta)
 ```
 
-VOIDMETA:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+VOIDMETA:   (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
 
 ```
 id = tokenIdHex (Hexidecimal)
