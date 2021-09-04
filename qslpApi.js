@@ -1838,7 +1838,7 @@ router.route('/vendor_qslp2_voidmeta')
 
 				jsonobject.qslp2.tp = "VOIDMETA";
 				jsonobject.qslp2.id = req.query.tokenid;
-				jsonobject.qslp2.tx = req.query.transactionid;
+				jsonobject.qslp2.tx = req.query.txid;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
