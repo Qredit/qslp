@@ -17,8 +17,8 @@ qslp_webhook = 'http://127.0.0.1/api/newblocknotify'
 qae_webhook = 'http://127.0.0.1/api/newblocknotify'
 
 webhooks_enabled = 0
-polling_interval = 8
-scanlock_staletime = 8
+polling_interval = 15
+scanlock_staletime = 15
 
 error_from_email = ''
 error_to_email = ''
