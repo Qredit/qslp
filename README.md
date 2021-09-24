@@ -17,9 +17,9 @@ CORE_WEBHOOKS_ENABLED=true
 CORE_WEBHOOKS_HOST=0.0.0.0
 CORE_WEBHOOKS_PORT=5104
 ```
-Go back to user root directory
+Go back to user root directory and restart qredit nodes to enable your new .env settings
 ```
-cd
+cd && pm2 restart all
 ```
 
 Clone this repo and enter qslp directory
