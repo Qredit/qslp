@@ -212,6 +212,16 @@ eight(){
 	echo "        Succesfully Launched QSLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
+}
+
+ninetynine(){
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "         Entering the Matrix           "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sleep 2
+	sudo apt-get install -y cmatrix
+	cmatrix
+	exit
 } 
 # function to display menus
 show_menus() {
@@ -232,6 +242,7 @@ show_menus() {
 	echo "7. View Status"
 	echo "8. Reinstall, Reset Config & Start QSLP"
 	echo "9. Exit"
+	echo "99. Enter the Matrix."
 	echo " "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "     One script to rule them all,      "
@@ -257,6 +268,7 @@ read_options(){
                 6) six ;;
 		7) seven ;;
 		8) eight ;;
+		99) ninetynine ;;
 		9) exit 0;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
