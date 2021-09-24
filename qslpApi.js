@@ -2018,11 +2018,11 @@ function validatePeer(peerip, peerport) {
 				}
 				else {
 					if (body && !body.error && body.ringsignature) {
-						console.log(" Validating " + peerip + ":" + peerport + " at journalid " + journalid + '\n' + " RingSig should be: " + ringsignature + '\n' + " RingSig received is: " + body.ringsignature);
+						console.log("> Validating " + peerip + ":" + peerport + " at journalid " + journalid + '\n' + " > RingSig should be: " + ringsignature + '\n' + " > RingSig received is: " + body.ringsignature);
 
 						if (body.ringsignature == ringsignature) {
 
-							console.log("Ring sig validated for peer: " + peerip + ":" + peerport);
+							console.log("Noice. Ring sig validated for peer: " + peerip + ":" + peerport);
 
 							// Validated
 							goodPeers[peerip + ":" + peerport] = { ip: peerip, port: peerport, lastJournalId: journalid, height: body.height };
@@ -2042,7 +2042,7 @@ function validatePeer(peerip, peerport) {
 					}
 					else {
 
-						console.log("Unable to validate at journalid: " + journalid);
+						console.log("x Not good. Unable to validate at journalid: " + journalid);
 
 						// Cannot validate
 						delete goodPeers[peerip + ":" + peerport];
@@ -2059,7 +2059,7 @@ function validatePeer(peerip, peerport) {
 		}
 		else {
 
-			console.log("We cannot get ringsig info from journal db... ");
+			console.log("x Not good. We cannot get ringsig info from journal db... ");
 
 		}
 
