@@ -2018,11 +2018,11 @@ function validatePeer(peerip, peerport) {
 				}
 				else {
 					if (body && !body.error && body.ringsignature) {
-						console.log("> Validating " + peerip + ":" + peerport + " at journalid " + journalid + '\n' + " > RingSig should be: " + ringsignature + '\n' + " > RingSig received is: " + body.ringsignature);
+						console.log("★ Validating " + peerip + ":" + peerport + " at journalid " + journalid + '\n' + " • RingSig expected: " + ringsignature + '\n' + " • RingSig received: " + body.ringsignature);
 
 						if (body.ringsignature == ringsignature) {
 
-							console.log(" ✔️ Noice. Ring sig validated for peer: " + peerip + ":" + peerport);
+							console.log(" ✔️ Noice. Ring sig validated for peer: " + peerip + ":" + peerport + " , wen moon? ");
 
 							// Validated
 							goodPeers[peerip + ":" + peerport] = { ip: peerip, port: peerport, lastJournalId: journalid, height: body.height };
