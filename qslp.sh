@@ -18,7 +18,7 @@ one(){
 	sudo apt-get -y install mongodb
 	sudo apt-get -y install redis-server
 	cp qslp.ini.example qslp.ini
-	sudo ufw allow 5190
+	sudo ufw allow 8001
 	yarn install
         pause
 }
