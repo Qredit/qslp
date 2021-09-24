@@ -1950,11 +1950,11 @@ function initialize() {
 		getSeedPeers();
 
 		// Defaults qm2/qm3
-		// validatePeer('95.217.235.75', 8001);
-		// validatePeer('116.203.70.214', 8001);
-		// validatePeer('78.47.141.58', 8001);
+		validatePeer('95.217.235.75', 8001);
+		validatePeer('116.203.70.214', 8001);
+		validatePeer('78.47.141.58', 8001);
 		validatePeer('135.181.106.105', 8001);
-		// validatePeer('95.217.186.135', 8001);
+		validatePeer('95.217.186.135', 8001);
 
 	})();
 
