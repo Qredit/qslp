@@ -2000,13 +2000,11 @@ function validatePeer(peerip, peerport) {
 			var journalid = dbreply[0]['_id'];
 			var chainhash = dbreply[0]['chainHash'];
 
-			console.log("Validating " + peerip + ":" + peerport + " at journalid " + journalid);
-
 			// This is what the peer hash should be
 
 			var ringsignature = crypto.createHash('sha256').update(peerip + chainhash).digest('hex');
 
-			console.log("RingSig should be: " + ringsignature);
+
 
 			request.get(peerapiurl + '/getRingSignature/' + journalid + '/' + port, { json: true }, function (error, response, body) {
 
@@ -2020,8 +2018,7 @@ function validatePeer(peerip, peerport) {
 				}
 				else {
 					if (body && !body.error && body.ringsignature) {
-
-						console.log("RingSig received is: " + body.ringsignature);
+						console.log("Validating " + peerip + ":" + peerport + " at journalid " + journalid + "RingSig should be: " + ringsignature + "RingSig received is: " + body.ringsignature);
 
 						if (body.ringsignature == ringsignature) {
 
