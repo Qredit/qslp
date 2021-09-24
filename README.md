@@ -23,7 +23,6 @@ Start qslp menu
 ./qslp.sh
 ```
 
-************************************
 
 Enable Webhooks in your Qredit Node:
 ```
@@ -37,21 +36,8 @@ CORE_WEBHOOKS_HOST=0.0.0.0
 CORE_WEBHOOKS_PORT=5104
 ```
 
-Clone the repository and setup config:
-```
-npm install
-cp qslp.ini.example qslp.ini
-```
+************************************
 
-Open port 5190 and run the programs:
-
-qslpApi.js - The API interface to the QSLP system
-qslpParser.js - The Qredit block parser
-```
-ufw allow 5190
-pm2 start qslpApi.js
-pm2 start qslpParser.js
-```
 
 The server runs on the port set in the ini file.   If you want to run on a port < 1000, you'll need to run qslpApi.js with sudo or use Nginx proxy
 
