@@ -13,12 +13,10 @@ pause(){
 
 
 one(){
-	echo "one() called"
+	echo "Installing QSLP and Prerequisites"
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 	sudo apt-get -y install mongodb
 	sudo apt-get -y install redis-server
-	npm install -g yarn
-	npm install -g pm2
 	cp qslp.ini.example qslp.ini
 	sudo ufw allow 5190
 	yarn install
@@ -27,7 +25,7 @@ one(){
  
 # do something in two()
 two(){
-	echo "two() called"
+	echo "Updating QSLP"
 	pm2 stop qslpParser.js
 	sleep 2
 	pm2 stop qslpApi.js
@@ -45,7 +43,7 @@ two(){
 }
 
 three(){
-        echo "three() called"
+        echo "Starting QSLP"
         pm2 start qslpParser.js
 	sleep 2
 	pm2 start qslpApi.js
@@ -54,7 +52,7 @@ three(){
 } 
 
 four(){
-        echo "four() called"
+        echo "Stopping QSLP"
         pm2 stop qslpParser.js
         sleep 2
         pm2 stop qslpApi.js
@@ -63,16 +61,14 @@ four(){
 } 
 
 five(){
-        echo "five() called"
+        echo "Starting PM2 Monitor"
         pm2 monit
-        echo "Watching logs."
         pause
 } 
 
 six(){
-        echo "five() called"
+        echo "PM2 Status"
         pm2 status   
-        echo "Viewing status."
         pause
 } 
 # function to display menus
