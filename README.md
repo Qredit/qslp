@@ -5,44 +5,32 @@ This is a sidechain for the Qredit network to integrate Simple Token issuance an
 
 This must be running on a Qredit Relay or Qredit Full node.
 
+************************************
 
-```
 
 Clone this repo and enter qslp directory
-
 ```
 git clone https://github.com/qredit/qslp && cd qslp
 ```
 
-
-```
-
 Give permissions to execute the Sidechain Menu
-
 ```
 chmod +x qslp.sh
 ```
 
-
-```
-
 Start qslp menu
-
 ```
 ./qslp.sh
 ```
 
-
-```
+************************************
 
 Enable Webhooks in your Qredit Node:
-
 ```
 nano .config/qredit-core/mainnet/.env
 ```
 
 Make sure the env file has these items:
-
 ```
 CORE_WEBHOOKS_ENABLED=true
 CORE_WEBHOOKS_HOST=0.0.0.0
@@ -50,7 +38,6 @@ CORE_WEBHOOKS_PORT=5104
 ```
 
 Clone the repository and setup config:
-
 ```
 npm install
 cp qslp.ini.example qslp.ini
@@ -60,7 +47,6 @@ Open port 5190 and run the programs:
 
 qslpApi.js - The API interface to the QSLP system
 qslpParser.js - The Qredit block parser
-
 ```
 ufw allow 5190
 pm2 start qslpApi.js
