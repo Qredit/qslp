@@ -17,6 +17,7 @@ one(){
 	echo "   Installing QSLP and Prerequisites   "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sudo apt-get update
+	sudo apt-get -y install cmatrix
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 	sudo apt-get -y install mongodb
 	sudo apt-get -y install redis-server
@@ -219,7 +220,6 @@ ninetynine(){
 	echo "         Entering the Matrix           "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 2
-	sudo apt-get install -y cmatrix
 	cmatrix
 	exit
 } 
@@ -233,15 +233,15 @@ show_menus() {
 	echo "           M A I N - M E N U           "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo " "
-	echo "1. Install QSLP"
-	echo "2. Update QSLP"
-	echo "3. Start QSLP"
-	echo "4. Restart QSLP"
-	echo "5. Stop QSLP"
-	echo "6. PM2 Monitor"
-	echo "7. View Status"
-	echo "8. Reinstall, Reset Config & Start QSLP"
-	echo "9. Exit"
+	echo " 1. Install QSLP"
+	echo " 2. Update QSLP"
+	echo " 3. Start QSLP"
+	echo " 4. Restart QSLP"
+	echo " 5. Stop QSLP"
+	echo " 6. PM2 Monitor"
+	echo " 7. View Status"
+	echo " 8. Reinstall, Reset Config & Start QSLP"
+	echo " 9. Exit"
 	echo "99. Enter the Matrix."
 	echo " "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
