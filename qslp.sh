@@ -223,6 +223,7 @@ show_menus() {
         echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "           M A I N - M E N U           "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo " "
 	echo "1. Install QSLP"
 	echo "2. Update QSLP"
 	echo "3. Start QSLP"
@@ -232,7 +233,14 @@ show_menus() {
 	echo "7. View Status"
 	echo "8. Reinstall, Reset Config & Start QSLP"
 	echo "9. Exit"
+	echo " "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "     One script to rule them all,      "
+	echo "        One script to find them,       "
+	echo "     One script to bring them all,     "
+	echo "     and in the darkness bind them.    "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
 }
 # read input from the keyboard and take a action
 # invoke the one() when the user select 1 from the menu option.
