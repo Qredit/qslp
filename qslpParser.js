@@ -273,7 +273,7 @@ function downloadChain() {
 				lastBlockId = message.rows[0].id;
 			}
 
-			console.log('Qredit Current Top Height #' + topHeight + '.....');
+			console.log('Current Block Height: #' + topHeight + '.....');
 
 		}
 
@@ -449,7 +449,7 @@ function doScan() {
 
 			//
 
-			console.log('Scanning from block #' + scanBlockId + '.....');
+			console.log('Scanning from Height: #' + scanBlockId + '.....');
 
 			(async () => {
 
@@ -461,7 +461,7 @@ function doScan() {
 
 				if (message && message.rows) currentHeight = parseInt(message.rows[0].height);
 
-				console.log('Current Blockchain Height: ' + currentHeight);
+				console.log('New QSLP Block Height: #' + currentHeight);
 
 				var mclient = await qdb.connect();
 				qdb.setClient(mclient);
@@ -496,7 +496,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 					scanLockTimer = Math.floor(new Date() / 1000);
 
-					if (count % 1000 == 0 || count == max) console.log("Scanning: " + count);
+					if (count % 1000 == 0 || count == max) console.log("Next scan from Height: #" + count);
 
 					pgclient.query('SELECT id, number_of_transactions, height, previous_block FROM blocks WHERE height = $1 LIMIT 1', [count], (err, message) => {
 
@@ -515,7 +515,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 								if (lastBlockId != previousblockid && thisblockheight > 1) {
 
 									// New code attempts a rollback
-									
+
 									(async () => {
 
 										var rollbackHeight = thisblockheight - 5;
@@ -544,12 +544,11 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 											process.exit(-1);
 
 										}
-									
+
 									})();
 
 								}
-								else
-								{
+								else {
 
 									lastBlockId = blockidcode;
 
@@ -693,7 +692,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 										})();
 
 									}
-								
+
 								}
 
 							}
@@ -744,7 +743,7 @@ function newblocknotify() {
 
 	lastBlockNotify = Math.floor(new Date() / 1000);
 
-	console.log('New Block Notify..');
+	console.log('Found New Blocks............');
 
 	if (scanLock == true) {
 		// TODO:  Check if it is a stale lock
