@@ -22,3 +22,5 @@ scanlock_staletime = 34
 
 error_from_email = ''
 error_to_email = ''
+
+delegate_address = ''
