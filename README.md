@@ -5,24 +5,34 @@ This is a sidechain for the Qredit network to integrate Simple Token issuance an
 
 This must be running on a Qredit Relay or Qredit Full node.
 
-Install NodeJS
-```
-sudo apt update
-sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-sudo apt -y install nodejs
-```
-
-Install PM2
-```
-npm -g install pm2
-```
-
-Install Mongodb & Redis:  (Default settings are fine)
 
 ```
-apt-get install mongodb
-apt-get install redis-server
+
+Clone this repo and enter qslp directory
+
+```
+git clone https://github.com/qredit/qslp && cd qslp
+```
+
+
+```
+
+Give permissions to execute the Sidechain Menu
+
+```
+chmod +x qslp.sh
+```
+
+
+```
+
+Start qslp menu
+
+```
+./qslp.sh
+```
+
+
 ```
 
 Enable Webhooks in your Qredit Node:
