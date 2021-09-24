@@ -27,17 +27,19 @@ one(){
 two(){
 	echo "Updating QSLP"
 	pm2 stop qslpParser.js
-	sleep 2
+	sleep 1
 	pm2 stop qslpApi.js
-	sleep 2
+	sleep 1
 	git pull
-	sleep 2
+	sleep 1
+	sudo ufw allow 8001
+	sleep 1
 	yarn install
-	sleep 2
+	sleep 1
 	pm2 start qslpParser.js
-	sleep 2
+	sleep 1
 	pm2 start qslpApi.js
-	sleep 2
+	sleep 1
 	echo "QSLP has been succesfully updated."
         pause
 }
@@ -45,7 +47,7 @@ two(){
 three(){
         echo "Starting QSLP"
         pm2 start qslpParser.js
-	sleep 2
+	sleep 1
 	pm2 start qslpApi.js
         echo "QSLP has been succesfully started."
         pause
@@ -54,7 +56,7 @@ three(){
 four(){
         echo "Stopping QSLP"
         pm2 stop qslpParser.js
-        sleep 2
+        sleep 1
         pm2 stop qslpApi.js
         echo "QSLP has been succesfully stopped."
         pause
