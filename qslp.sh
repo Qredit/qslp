@@ -16,6 +16,7 @@ one(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "   Installing QSLP and Prerequisites   "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sudo apt-get update
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 	sudo apt-get -y install mongodb
 	sudo apt-get -y install redis-server
@@ -174,6 +175,7 @@ eight(){
 	echo "        Installing Prerequisites       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
+	sudo apt-get update
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 	sudo apt-get -y install mongodb
 	sudo apt-get -y install redis-server
