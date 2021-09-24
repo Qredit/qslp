@@ -19,18 +19,26 @@ one(){
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 	sudo apt-get -y install mongodb
 	sudo apt-get -y install redis-server
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "             Moving config             "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	cp qslp.ini.example qslp.ini
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "    Allowing port 8001 on firewall     "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sudo ufw allow 8001
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo " Installing Qredit Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	yarn install
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "       Succesfully Installed QSLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -44,21 +52,29 @@ two(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	pm2 stop qslpParser.js
 	pm2 stop qslpApi.js
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "     Pulling Updates from Github       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	git pull
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "    Allowing port 8001 on firewall     "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	sudo ufw allow 8001
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo " Installing Qredit Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	yarn install
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "  Launching Qredit Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -66,7 +82,8 @@ two(){
 	pm2 start qslpParser.js
 	sleep 1
 	pm2 start qslpApi.js
-	sleep 1
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "        Succesfully Launched QSLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -165,16 +182,21 @@ eight(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	cp qslp.ini.example qslp.ini
+	echo "done.."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "    Allowing port 8001 on firewall     "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	sudo ufw allow 8001
+	echo "done.."
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo " Installing Qredit Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	yarn install
+	echo "done..."
+	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "  Launching Qredit Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -182,6 +204,8 @@ eight(){
         pm2 start qslpParser.js
 	sleep 1
 	pm2 start qslpApi.js
+	echo "done..."
+	sleep 1
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "        Succesfully Launched QSLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
