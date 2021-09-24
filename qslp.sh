@@ -13,107 +13,178 @@ pause(){
 
 
 one(){
-	echo "Installing QSLP and Prerequisites"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "   Installing QSLP and Prerequisites   "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 	sudo apt-get -y install mongodb
 	sudo apt-get -y install redis-server
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "             Moving config             "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	cp qslp.ini.example qslp.ini
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "    Allowing port 8001 on firewall     "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sudo ufw allow 8001
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo " Installing Qredit Side Ledger Protocol "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	yarn install
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "       Succesfully Installed QSLP       "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 }
  
 # do something in two()
 two(){
-	echo "Updating QSLP"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "             Stopping QSLP             "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	pm2 stop qslpParser.js
 	pm2 stop qslpApi.js
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "     Pulling Updates from Github       "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	git pull
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "    Allowing port 8001 on firewall     "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	sudo ufw allow 8001
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo " Installing Qredit Side Ledger Protocol "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	yarn install
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "  Launching Qredit Side Ledger Protocol "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	pm2 start qslpParser.js
 	sleep 1
 	pm2 start qslpApi.js
 	sleep 1
-	echo "QSLP has been succesfully updated."
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "        Succesfully Launched QSLP       "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 }
 
 three(){
-        echo "Starting QSLP"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "  Launching Qredit Side Ledger Protocol "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sleep 1
         pm2 start qslpParser.js
 	sleep 1
 	pm2 start qslpApi.js
-        echo "QSLP has been succesfully started."
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "        Succesfully Launched QSLP       "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 } 
 
 four(){
-        echo "Stopping QSLP"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "             Stopping QSLP             "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pm2 stop qslpParser.js
         pm2 stop qslpApi.js
-        echo "QSLP has been succesfully stopped."
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "             Stopped QSLP              "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
-	echo "Starting QSLP"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "  Launching Qredit Side Ledger Protocol "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sleep 1
         pm2 start qslpParser.js
 	sleep 1
 	pm2 start qslpApi.js
-        echo "QSLP has been succesfully started."
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "        Succesfully Launched QSLP       "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 } 
 
 five(){
-        echo "Stopping QSLP"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "             Stopping QSLP             "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pm2 stop qslpParser.js
         sleep 1
         pm2 stop qslpApi.js
-        echo "QSLP has been succesfully stopped."
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "             Stopped QSLP              "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sleep 1
         pause
 } 
 
 six(){
-        echo "Starting PM2 Monitor"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "             PM2 Monitor               "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pm2 monit
         pause
 } 
 
 seven(){
-        echo "PM2 Status"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "              PM2 Status               "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sleep 1
         pm2 status   
         pause
 } 
 
 eight(){
-	echo "Stopping all QSLP Processes"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "             Stopping QSLP             "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sleep 1
 	pm2 stop qslpParser.js
         pm2 stop qslpApi.js
-	echo "Pulling updates"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "     Pulling Updates from Github       "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	git pull
-	echo "Installing Prerequisites"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "        Installing Prerequisites       "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 	sudo apt-get -y install mongodb
 	sudo apt-get -y install redis-server
-	echo "Resetting Config"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "            Resetting Config           "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	cp qslp.ini.example qslp.ini
-	echo "Adding Port 8001 to UFW"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "    Allowing port 8001 on firewall     "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	sudo ufw allow 8001
-	echo "Installing QSLP"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo " Installing Qredit Side Ledger Protocol "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	yarn install
-	echo "Starting QSLP"
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "  Launching Qredit Side Ledger Protocol "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
         pm2 start qslpParser.js
 	sleep 1
 	pm2 start qslpApi.js
-        echo "QSLP has been succesfully installed and launched."
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "        Succesfully Launched QSLP       "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 } 
 # function to display menus
