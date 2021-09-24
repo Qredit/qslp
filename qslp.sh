@@ -27,7 +27,6 @@ one(){
 two(){
 	echo "Updating QSLP"
 	pm2 stop qslpParser.js
-	sleep 1
 	pm2 stop qslpApi.js
 	sleep 1
 	git pull
