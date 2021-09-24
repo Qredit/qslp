@@ -14,6 +14,7 @@ seed_node = 'https://qredit.cloud/api/'
 api_node = 'http://127.0.0.1:5103/api/v2'
 webhook_node = 'http://127.0.0.1:5104/api'
 qslp_webhook = 'http://127.0.0.1/api/newblocknotify'
+qae_webhook = 'http://127.0.0.1/api/newblocknotify'
 
 webhooks_enabled = 0
 polling_interval = 120
