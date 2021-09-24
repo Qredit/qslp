@@ -16,7 +16,6 @@ one(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "   Installing QSLP and Prerequisites   "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	sudo apt-get update
 	sudo apt-get -y install cmatrix
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 	sudo apt-get -y install mongodb
@@ -215,6 +214,18 @@ eight(){
         pause
 }
 
+ninetyeight(){
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo "         Entering the Matrix           "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sleep 2
+	sudo apt-get -y install cmatrix
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	echo " You are now ready to enter the Matrix "
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	sleep 2
+} 
+
 ninetynine(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "         Entering the Matrix           "
@@ -242,6 +253,7 @@ show_menus() {
 	echo " 7. View Status"
 	echo " 8. Reinstall, Reset Config & Start QSLP"
 	echo " 9. Exit"
+	echo "98. Install the Matrix"
 	echo "99. Enter the Matrix."
 	echo " "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -268,6 +280,7 @@ read_options(){
                 6) six ;;
 		7) seven ;;
 		8) eight ;;
+		98) ninetyeight ;;
 		99) ninetynine ;;
 		9) exit 0;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
