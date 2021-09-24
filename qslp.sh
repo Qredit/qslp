@@ -216,7 +216,7 @@ eight(){
 
 ninetyeight(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "         Entering the Matrix           "
+	echo "        Installing the Matrix          "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 2
 	sudo apt-get -y install cmatrix
