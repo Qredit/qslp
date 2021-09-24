@@ -2018,7 +2018,7 @@ function validatePeer(peerip, peerport) {
 				}
 				else {
 					if (body && !body.error && body.ringsignature) {
-						console.log("Validating " + peerip + ":" + peerport + " at journalid " + journalid + "RingSig should be: " + ringsignature + "RingSig received is: " + body.ringsignature);
+						console.log(" Validating " + peerip + ":" + peerport + " at journalid " + journalid + '\n' + " RingSig should be: " + ringsignature + '\n' + " RingSig received is: " + body.ringsignature);
 
 						if (body.ringsignature == ringsignature) {
 
