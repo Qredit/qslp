@@ -45,7 +45,32 @@ Start qslp menu
 
 The server runs on the port set in the ini file.   If you want to run on a port < 1000, you'll need to run qslpApi.js with sudo or use Nginx proxy
 
-Currently the system supports the QSLP contract schema (v15).   QSLP contract schema (v15) is currently in development.
+Currently the system supports the QSLP contract schema (v15).   QSLP contract schemas are backwards compatible.
+
+Example JSON Object for Genesis:
+
+```
+{
+	qslp1: {
+		tp: 'GENESIS',
+		de: 8,
+		sy: 'TEST',
+		na: 'Test Token',
+		du: 'https://test.com',
+		qt: 100000,
+		no: 'notes',
+		pa: false,
+		mi: false
+	}
+}
+```
+
+Stringified, this object will look like this for submitting to the network:
+
+```
+{qslp1: {tp: 'GENESIS',de: 8,sy: 'TEST',na: 'Test Token',du: 'https://test.com',qt: 100000,no: 'notes',pa: false,mi: false}}
+```
+
 
 QSLP (Schema v15) Contract Methods:
 

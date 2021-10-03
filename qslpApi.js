@@ -35,8 +35,31 @@ var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
 const mongoconnecturl = iniconfig.mongo_connection_string;
 const mongodatabase = iniconfig.mongo_database;
 
-// MongoDB Library
+// MongoDB Library and Connection
 const qslpDB = require("./lib/qslpDB");
+
+const qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
+var mclient = await qdbapi.connect();
+qdbapi.setClient(mclient);
+
+// Mongo Keep Alive
+
+setInterval(function() {
+
+	try {
+
+		var ping = await qdbapi.ping();
+	
+	} catch (e) {
+	
+		console.log('Error Pinging Mongo... Reconnecting.');
+
+		mclient = await qdbapi.connect();
+		qdbapi.setClient(mclient);
+
+	}
+
+}, 30000);
 
 // Connect to Redis and setup some async call definitions
 const rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
@@ -172,13 +195,7 @@ router.route('/tokens')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('tokens', {}, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -197,13 +214,7 @@ router.route('/token/:id')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': tokenid });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -222,16 +233,9 @@ router.route('/tokenWithMeta/:id')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			message = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': tokenid });
 
 			message.metadata = await qdbapi.findDocuments('metadata', { "metaDetails.tokenIdHex": tokenid }, 9999, { "metaDetails.timestamp_unix": 1, "metaDetails.chunk": 1 }, 0);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -250,13 +254,7 @@ router.route('/tokenByTxid/:txid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('tokens', { 'tokenStats.creation_transaction_id': txid });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -289,13 +287,7 @@ router.route('/addresses')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('addresses', {}, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -314,13 +306,7 @@ router.route('/address/:addr')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('addresses', { "address": addr });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -355,13 +341,7 @@ router.route('/addressesByTokenId/:tokenid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('addresses', { "tokenIdHex": tokenid }, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -381,18 +361,10 @@ router.route('/balance/:tokenid/:address')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var rawRecordId = addr + '.' + tokenid;
-			//var recordId = crypto.createHash('md5').update(rawRecordId).digest('hex');
 			var recordId = SparkMD5.hash(rawRecordId);
 
 			message = await qdbapi.findDocument('addresses', { "recordId": recordId });
-
-			qdbapi.close();
 
 			if (message && message.tokenBalance) {
 
@@ -435,13 +407,7 @@ router.route('/transactions')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('transactions', {}, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -460,13 +426,7 @@ router.route('/transaction/:txid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('transactions', { "txid": txid });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -501,16 +461,9 @@ router.route('/transactions/:tokenid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var mquery = { "transactionDetails.tokenIdHex": tokenid };
 
 			message = await qdbapi.findDocuments('transactions', mquery, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -546,11 +499,6 @@ router.route('/transactions/:tokenid/:address')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var mquery = {
 				$and:
 					[
@@ -569,8 +517,6 @@ router.route('/transactions/:tokenid/:address')
 
 			message = await qdbapi.findDocuments('transactions', mquery, limit, sort, skip);
 
-			qdbapi.close();
-
 			res.json(message);
 
 		})();
@@ -588,13 +534,7 @@ router.route('/metadata/:txid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('metadata', { "txid": txid });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -629,16 +569,9 @@ router.route('/metadata/:tokenid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var mquery = { "metaDetails.tokenIdHex": tokenid };
 
 			message = await qdbapi.findDocuments('metadata', mquery, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -674,11 +607,6 @@ router.route('/metadata/:tokenid/:address')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var mquery = {
 				$and:
 					[
@@ -692,8 +620,6 @@ router.route('/metadata/:tokenid/:address')
 			};
 
 			message = await qdbapi.findDocuments('metadata', mquery, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -728,13 +654,7 @@ router.route('/tokensByOwner/:owner')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('tokens', { "tokenDetails.ownerAddress": ownerId }, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -813,14 +733,7 @@ router.route('/getRingSignature/:journalid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var dbreply = await qdbapi.findDocument('journal', { "_id": journalid });
-
-			qdbapi.close();
 
 			if (dbreply) {
 
@@ -857,14 +770,7 @@ router.route('/getRingSignature/:journalid/:callerport')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var dbreply = await qdbapi.findDocument('journal', { "_id": journalid });
-
-			qdbapi.close();
 
 			if (dbreply) {
 
@@ -907,14 +813,7 @@ router.route('/getJournals/:start/:end')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var dbreply = await qdbapi.findDocuments('journal', { $and: [{ "_id": { $gte: startjournalid } }, { "_id": { $lte: endjournalid } }] });
-
-			qdbapi.close();
 
 			if (dbreply) {
 
@@ -1027,13 +926,7 @@ router.route('/vendor_qslp1_burn')
 
 			try {
 
-				var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-				var mclient = await qdbapi.connect();
-				qdbapi.setClient(mclient);
 				var tokeninfo = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': req.query.tokenid });
-
-				qdbapi.close();
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
@@ -1090,13 +983,7 @@ router.route('/vendor_qslp1_mint')
 
 			try {
 
-				var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-				var mclient = await qdbapi.connect();
-				qdbapi.setClient(mclient);
 				var tokeninfo = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': req.query.tokenid });
-
-				qdbapi.close();
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
@@ -1153,13 +1040,7 @@ router.route('/vendor_qslp1_send')
 
 			try {
 
-				var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-				var mclient = await qdbapi.connect();
-				qdbapi.setClient(mclient);
 				var tokeninfo = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': req.query.tokenid });
-
-				qdbapi.close();
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
@@ -1984,16 +1865,9 @@ function validatePeer(peerip, peerport) {
 
 	(async () => {
 
-		var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-		var mclient = await qdbapi.connect();
-		qdbapi.setClient(mclient);
-
 		var sort = { "_id": -1 };
 
 		var dbreply = await qdbapi.findDocumentsWithId('journal', {}, 1, sort, 0);
-
-		qdbapi.close();
 
 		if (dbreply && dbreply.length > 0) {
 

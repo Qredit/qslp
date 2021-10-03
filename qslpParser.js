@@ -299,6 +299,8 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 	return new Promise((resolve) => {
 
 		(async () => {
+		
+			journalHeight = parseInt(journalHeight);
 
 			var startTime = (new Date()).getTime();
 
@@ -326,66 +328,82 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				var findLastJournal = await qdb.findDocumentsWithId('journal', {}, 1, { "_id": -1 }, 0);
 
 				var lastJournalEntry = findLastJournal[0];
+				
+				if (!lastJournalEntry)
+				{
+					// Something Broke.  Start over....
 
-				var lastJournalID = lastJournalEntry['_id'];
-				var lastJournalBlockId = lastJournalEntry['blockId'];
-				var lastJournalBlockHeight = lastJournalEntry['blockHeight'];
+					rclient.del('QSLP_lastblockid', function (err, reply) {
+						rclient.del('QSLP_lastscanblock', function (err, reply) {
+							process.exit(-1);
+						});
+					});
+				
+				}
+				else
+				{
 
-				console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
+					var lastJournalID = lastJournalEntry['_id'];
+					var lastJournalBlockId = lastJournalEntry['blockId'];
+					var lastJournalBlockHeight = lastJournalEntry['blockHeight'];
 
-				// Update Counters to new top Journal
-				await qdb.updateDocument('counters', { "_id": "journal" }, { "seq": lastJournalID });
+					console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
 
-				// Rebuild DB via Journal
+					// Update Counters to new top Journal
+					await qdb.updateDocument('counters', { "_id": "journal" }, { "seq": lastJournalID });
 
-				var jLimit = 1000;
-				var jStart = 0;
-				var jContinue = 1;
+					// Rebuild DB via Journal
 
-				while (jContinue == 1) {
+					var jLimit = 1000;
+					var jStart = 0;
+					var jContinue = 1;
 
-					var getJournals = await qdb.findDocumentsWithId('journal', {}, jLimit, { "_id": 1 }, jStart);
+					while (jContinue == 1) {
 
-					console.log('Rebuilding ' + getJournals.length + ' Journal Entries....');
+						var getJournals = await qdb.findDocumentsWithId('journal', {}, jLimit, { "_id": 1 }, jStart);
 
-					jStart = jStart + jLimit;
-					if (getJournals.length == 0) jContinue = 0;
+						console.log('Rebuilding ' + getJournals.length + ' Journal Entries....');
 
-					for (ji = 0; ji < getJournals.length; ji++) {
+						jStart = jStart + jLimit;
+						if (getJournals.length == 0) jContinue = 0;
 
-						var journalItem = getJournals[ji];
+						for (ji = 0; ji < getJournals.length; ji++) {
 
-						var journalAction = journalItem['action'];
-						var journalCollection = journalItem['collectionName'];
-						var journalField = JSON.parse(journalItem['fieldData']);
-						var journalRecord = JSON.parse(journalItem['recordData']);
+							var journalItem = getJournals[ji];
 
-						if (journalAction == 'insert') {
+							var journalAction = journalItem['action'];
+							var journalCollection = journalItem['collectionName'];
+							var journalField = JSON.parse(journalItem['fieldData']);
+							var journalRecord = JSON.parse(journalItem['recordData']);
 
-							await qdb.insertDocument(journalCollection, journalRecord);
+							if (journalAction == 'insert') {
 
-						}
-						else if (journalAction == 'update') {
+								await qdb.insertDocument(journalCollection, journalRecord);
 
-							await qdb.updateDocument(journalCollection, journalField, journalRecord);
+							}
+							else if (journalAction == 'update') {
 
-						}
-						else {
-							console.log('UNKNOWN Journal Action - FATAL');
+								await qdb.updateDocument(journalCollection, journalField, journalRecord);
 
-							rclient.del('QSLP_lastblockid', function (err, reply) {
-								rclient.del('QSLP_lastscanblock', function (err, reply) {
-									process.exit(-1);
+							}
+							else {
+								console.log('UNKNOWN Journal Action - FATAL');
+
+								rclient.del('QSLP_lastblockid', function (err, reply) {
+									rclient.del('QSLP_lastscanblock', function (err, reply) {
+										process.exit(-1);
+									});
 								});
-							});
+
+							}
 
 						}
 
 					}
 
-				}
+					console.log('Journal Rebuild Completed..');
 
-				console.log('Journal Rebuild Completed..');
+				}
 
 			} catch (e) {
 
