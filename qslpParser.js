@@ -100,11 +100,12 @@ rclient.on('error', function () {
 	error_handle("Error in Redis", 'redisConnection');
 });
 
-// Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node QSLPApiv2.js true)
 
 rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 
-	if ((process.argv.length == 3 && (process.argv[2] == '1' || process.argv[2] == 'true')) || lbreply == null || parseInt(lbreply) != lbreply) {
+	// Resync/Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node qslpParser.js resync)
+
+	if ((process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null || parseInt(lbreply) != lbreply) {
 
 		(async () => {
 
@@ -198,8 +199,32 @@ rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 		})();
 
 	}
-	else {
-		// Initialze things
+	else if (process.argv.length == 4 && process.argv[2] == 'rollback') 
+	{
+	
+		/* Roll back to specified blockheight and resume from there:   node qslpParser.js rollback 122343 */
+
+		(async () => {
+
+			var rollbackHeight = parseInt(process.argv[3]);
+
+			var mclient = await qdb.connect();
+			qdb.setClient(mclient);
+			
+			console.log("Performing Rollback to Block Height: " + rollbackHeight);
+		
+			await rebuildDbFromJournal(rollbackHeight, qdb);
+
+			console.log("Restarting...");
+
+			process.exit(-1);
+
+		})();
+
+	}
+	else 
+	{
+		// These aren't the droids we are looking for, move along...  
 		initialize();
 	}
 
