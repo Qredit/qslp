@@ -4,7 +4,7 @@ info:
   description: |
     API Documentation for the QSLP v1 & v2 API
     <h4>API Endpoint URL</h4>
-    The endpoint for our REST API is:  <code>https://arkqslp.qredit.cloud/api</code>
+    The endpoint for our REST API is:  <code>https://qslp.qredit.cloud/api</code>
     <br /><br />
     <h4>Datetime Formatting</h4>
     Unless otherwise stated, all timestamps are returned in ISO8601 format in UTC. Example: "2018-04-01T00:00:00Z" or "2018-04-01T00:00:00.000Z".   If a timestamp is returned as an Integer, then that is a Unix timestamp.
@@ -83,7 +83,7 @@ info:
     </table>
   version: 1.0.2
 servers:
-- url: https://arkqslp.qredit.cloud/api
+- url: https://qslp.qredit.cloud/api
 paths:
   /status:
     get:
@@ -1182,7 +1182,7 @@ paths:
         required: true
         schema:
           type: string
-      - name: transactionid
+      - name: txid
         in: query
         required: true
         schema:

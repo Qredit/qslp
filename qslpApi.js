@@ -34,9 +34,48 @@ var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
 const mongodatabase = iniconfig.mongo_database;
+const qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
 
-// MongoDB Library
+// MongoDB Library and Connection
 const qslpDB = require("./lib/qslpDB");
+
+// Mongo Connect
+
+connectDb();
+
+function connectDb() {
+
+	(async () => {
+
+		var mclient = await qdbapi.connect();
+		qdbapi.setClient(mclient);
+
+	})();
+	
+}
+
+// Mongo Keep Alive
+
+setInterval(function() {
+
+	(async () => {
+	
+		try {
+
+			var ping = await qdbapi.ping();
+	
+		} catch (e) {
+	
+			console.log('Error Pinging Mongo... Reconnecting.');
+
+			mclient = await qdbapi.connect();
+			qdbapi.setClient(mclient);
+
+		}
+	
+	})();
+
+}, 30000);
 
 // Connect to Redis and setup some async call definitions
 const rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
@@ -172,13 +211,7 @@ router.route('/tokens')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('tokens', {}, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -197,13 +230,7 @@ router.route('/token/:id')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': tokenid });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -222,16 +249,9 @@ router.route('/tokenWithMeta/:id')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			message = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': tokenid });
 
 			message.metadata = await qdbapi.findDocuments('metadata', { "metaDetails.tokenIdHex": tokenid }, 9999, { "metaDetails.timestamp_unix": 1, "metaDetails.chunk": 1 }, 0);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -250,13 +270,7 @@ router.route('/tokenByTxid/:txid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('tokens', { 'tokenStats.creation_transaction_id': txid });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -289,13 +303,7 @@ router.route('/addresses')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('addresses', {}, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -314,13 +322,7 @@ router.route('/address/:addr')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('addresses', { "address": addr });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -355,13 +357,7 @@ router.route('/addressesByTokenId/:tokenid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('addresses', { "tokenIdHex": tokenid }, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -381,18 +377,10 @@ router.route('/balance/:tokenid/:address')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var rawRecordId = addr + '.' + tokenid;
-			//var recordId = crypto.createHash('md5').update(rawRecordId).digest('hex');
 			var recordId = SparkMD5.hash(rawRecordId);
 
 			message = await qdbapi.findDocument('addresses', { "recordId": recordId });
-
-			qdbapi.close();
 
 			if (message && message.tokenBalance) {
 
@@ -435,13 +423,7 @@ router.route('/transactions')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('transactions', {}, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -460,13 +442,7 @@ router.route('/transaction/:txid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('transactions', { "txid": txid });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -501,16 +477,9 @@ router.route('/transactions/:tokenid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var mquery = { "transactionDetails.tokenIdHex": tokenid };
 
 			message = await qdbapi.findDocuments('transactions', mquery, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -546,11 +515,6 @@ router.route('/transactions/:tokenid/:address')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var mquery = {
 				$and:
 					[
@@ -569,8 +533,6 @@ router.route('/transactions/:tokenid/:address')
 
 			message = await qdbapi.findDocuments('transactions', mquery, limit, sort, skip);
 
-			qdbapi.close();
-
 			res.json(message);
 
 		})();
@@ -588,13 +550,7 @@ router.route('/metadata/:txid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('metadata', { "txid": txid });
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -629,16 +585,9 @@ router.route('/metadata/:tokenid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var mquery = { "metaDetails.tokenIdHex": tokenid };
 
 			message = await qdbapi.findDocuments('metadata', mquery, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -674,11 +623,6 @@ router.route('/metadata/:tokenid/:address')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var mquery = {
 				$and:
 					[
@@ -692,8 +636,6 @@ router.route('/metadata/:tokenid/:address')
 			};
 
 			message = await qdbapi.findDocuments('metadata', mquery, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -728,13 +670,7 @@ router.route('/tokensByOwner/:owner')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
 			message = await qdbapi.findDocuments('tokens', { "tokenDetails.ownerAddress": ownerId }, limit, sort, skip);
-
-			qdbapi.close();
 
 			res.json(message);
 
@@ -813,14 +749,7 @@ router.route('/getRingSignature/:journalid')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var dbreply = await qdbapi.findDocument('journal', { "_id": journalid });
-
-			qdbapi.close();
 
 			if (dbreply) {
 
@@ -857,14 +786,7 @@ router.route('/getRingSignature/:journalid/:callerport')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var dbreply = await qdbapi.findDocument('journal', { "_id": journalid });
-
-			qdbapi.close();
 
 			if (dbreply) {
 
@@ -907,14 +829,7 @@ router.route('/getJournals/:start/:end')
 
 		(async () => {
 
-			var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-			var mclient = await qdbapi.connect();
-			qdbapi.setClient(mclient);
-
 			var dbreply = await qdbapi.findDocuments('journal', { $and: [{ "_id": { $gte: startjournalid } }, { "_id": { $lte: endjournalid } }] });
-
-			qdbapi.close();
 
 			if (dbreply) {
 
@@ -1027,13 +942,7 @@ router.route('/vendor_qslp1_burn')
 
 			try {
 
-				var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-				var mclient = await qdbapi.connect();
-				qdbapi.setClient(mclient);
 				var tokeninfo = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': req.query.tokenid });
-
-				qdbapi.close();
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
@@ -1090,13 +999,7 @@ router.route('/vendor_qslp1_mint')
 
 			try {
 
-				var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-				var mclient = await qdbapi.connect();
-				qdbapi.setClient(mclient);
 				var tokeninfo = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': req.query.tokenid });
-
-				qdbapi.close();
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
@@ -1153,13 +1056,7 @@ router.route('/vendor_qslp1_send')
 
 			try {
 
-				var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-				var mclient = await qdbapi.connect();
-				qdbapi.setClient(mclient);
 				var tokeninfo = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': req.query.tokenid });
-
-				qdbapi.close();
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
@@ -1838,7 +1735,7 @@ router.route('/vendor_qslp2_voidmeta')
 
 				jsonobject.qslp2.tp = "VOIDMETA";
 				jsonobject.qslp2.id = req.query.tokenid;
-				jsonobject.qslp2.tx = req.query.transactionid;
+				jsonobject.qslp2.tx = req.query.txid;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1949,17 +1846,12 @@ function initialize() {
 
 		getSeedPeers();
 
-		// arkslp.qredit.cloud
-		// arkqslp2.qredit.cloud
-		// arkqslp3.qredit.cloud
-		// arkqslp4.qredit.cloud
-		// arkqslp5.qredit.cloud
-
-		validatePeer('95.217.184.222', 8002);
-		validatePeer('135.181.151.134', 8002);
-		validatePeer('95.217.12.172', 8002);
-		validatePeer('95.216.171.167', 8002);
-		validatePeer('95.217.10.178', 8002);
+		// Defaults qm2/qm3
+		validatePeer('95.217.235.75', 8001);
+		validatePeer('116.203.70.214', 8001);
+		//validatePeer('78.47.141.58', 8001);
+		//validatePeer('135.181.106.105', 8001);
+		//validatePeer('95.217.186.135', 8001);
 
 	})();
 
@@ -1989,29 +1881,20 @@ function validatePeer(peerip, peerport) {
 
 	(async () => {
 
-		var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
-
-		var mclient = await qdbapi.connect();
-		qdbapi.setClient(mclient);
-
 		var sort = { "_id": -1 };
 
 		var dbreply = await qdbapi.findDocumentsWithId('journal', {}, 1, sort, 0);
-
-		qdbapi.close();
 
 		if (dbreply && dbreply.length > 0) {
 
 			var journalid = dbreply[0]['_id'];
 			var chainhash = dbreply[0]['chainHash'];
 
-			console.log("Validating " + peerip + ":" + peerport + " at journalid " + journalid);
-
 			// This is what the peer hash should be
 
 			var ringsignature = crypto.createHash('sha256').update(peerip + chainhash).digest('hex');
 
-			console.log("RingSig should be: " + ringsignature);
+
 
 			request.get(peerapiurl + '/getRingSignature/' + journalid + '/' + port, { json: true }, function (error, response, body) {
 
@@ -2025,12 +1908,11 @@ function validatePeer(peerip, peerport) {
 				}
 				else {
 					if (body && !body.error && body.ringsignature) {
-
-						console.log("RingSig received is: " + body.ringsignature);
+						console.log("★ Validating " + peerip + ":" + peerport + " at journalid " + journalid + '\n' + " • RingSig expected: " + ringsignature + '\n' + " • RingSig received: " + body.ringsignature);
 
 						if (body.ringsignature == ringsignature) {
 
-							console.log("Ring sig validated for peer: " + peerip + ":" + peerport);
+							console.log(" ✔️ Noice. Ring sig validated for peer: " + peerip + ":" + peerport + " , wen moon? ");
 
 							// Validated
 							goodPeers[peerip + ":" + peerport] = { ip: peerip, port: peerport, lastJournalId: journalid, height: body.height };
@@ -2050,7 +1932,7 @@ function validatePeer(peerip, peerport) {
 					}
 					else {
 
-						console.log("Unable to validate at journalid: " + journalid);
+						console.log(" ✗ Not good. Unable to validate at journalid: " + journalid);
 
 						// Cannot validate
 						delete goodPeers[peerip + ":" + peerport];
@@ -2067,7 +1949,7 @@ function validatePeer(peerip, peerport) {
 		}
 		else {
 
-			console.log("We cannot get ringsig info from journal db... ");
+			console.log(" ✗ Not good. We cannot get ringsig info from journal db... ");
 
 		}
 
@@ -2298,3 +2180,4 @@ function error_handle(error, caller = 'unknown', severity = 'error') {
 	});
 
 }
+

@@ -5,61 +5,72 @@ This is a sidechain for the Qredit network to integrate Simple Token issuance an
 
 This must be running on a Qredit Relay or Qredit Full node.
 
-Install NodeJS
-```
-sudo apt update
-sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-sudo apt -y install nodejs
-```
-
-Install PM2
-```
-npm -g install pm2
-```
-
-Install Mongodb & Redis:  (Default settings are fine)
-
-```
-apt-get install mongodb
-apt-get install redis-server
-```
-
+************************************
 Enable Webhooks in your Qredit Node:
-
 ```
 nano .config/qredit-core/mainnet/.env
 ```
 
 Make sure the env file has these items:
-
 ```
 CORE_WEBHOOKS_ENABLED=true
 CORE_WEBHOOKS_HOST=0.0.0.0
 CORE_WEBHOOKS_PORT=5104
 ```
-
-Clone the repository and setup config:
-
+Go back to user root directory and restart qredit nodes to enable your new .env settings
 ```
-npm install
-cp qslp.ini.example qslp.ini
+cd && pm2 restart all
 ```
 
-Open port 5190 and run the programs:
-
-qslpApi.js - The API interface to the QSLP system
-qslpParser.js - The Qredit block parser
-
+Clone this repo and enter qslp directory
 ```
-ufw allow 5190
-pm2 start qslpApi.js
-pm2 start qslpParser.js
+git clone https://github.com/qredit/qslp && cd qslp
 ```
+
+Give permissions to execute the Sidechain Menu
+```
+chmod +x qslp.sh
+```
+
+Start qslp menu
+```
+./qslp.sh
+```
+
+
+
+
+************************************
+
 
 The server runs on the port set in the ini file.   If you want to run on a port < 1000, you'll need to run qslpApi.js with sudo or use Nginx proxy
 
-Currently the system supports the QSLP contract schema (v15).   QSLP contract schema (v15) is currently in development.
+Currently the system supports the QSLP contract schema (v15).   QSLP contract schemas are backwards compatible.
+
+Example JSON Object for Genesis:
+
+```
+{
+	qslp1: {
+		tp: 'GENESIS',
+		de: 8,
+		sy: 'TEST',
+		na: 'Test Token',
+		du: 'https://test.com',
+		qt: 100000,
+		no: 'notes',
+		pa: false,
+		mi: false
+	}
+}
+```
+
+Stringified, this object will look like this for submitting to the network:
+
+```
+{qslp1: {tp: 'GENESIS',de: 8,sy: 'TEST',na: 'Test Token',du: 'https://test.com',qt: 100000,no: 'notes',pa: false,mi: false}}
+```
+
 
 QSLP (Schema v15) Contract Methods:
 
@@ -77,7 +88,7 @@ UNFREEZE - UnFreeze balance for Token @ Address.
 
 JSON Variables:
 
-GENESIS:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+GENESIS:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 de = Decimal Places  (Integer: 0-8)
@@ -90,7 +101,7 @@ pa = Pausable (Boolean:  Default false)  (Optional)
 mi = Mintable (Boolean:  Default false)  (Optional)
 ```
 
-BURN:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+BURN:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -98,7 +109,7 @@ qt = Quantity (Integer)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-MINT:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+MINT:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -114,14 +125,14 @@ qt = Quantity (Integer)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-PAUSE:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+PAUSE:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-RESUME:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+RESUME:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -166,7 +177,7 @@ VOIDMETA - Mark a previously added meta data as void
 
 JSON Variables:
 
-GENESIS:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+GENESIS:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 sy = Symbol / Ticker  (String: 3-8 characters)
@@ -176,14 +187,14 @@ no = Notes  (String: Max 32 Characters)  (Optional)
 pa = Pausable (Boolean:  Default false)  (Optional)
 ```
 
-PAUSE:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+PAUSE:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-RESUME:  (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+RESUME:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -210,14 +221,14 @@ id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-CLONE:   (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+CLONE:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional - Leaveing blank will copy notes from original, providing will create new notes)
 ```
 
-ADDMETA:   (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+ADDMETA:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -226,7 +237,7 @@ na = Name  (String: Max 32 Characters --  name of meta info)
 dt = Data  (String -- stringified data for your meta)
 ```
 
-VOIDMETA:   (Recipient Address is QSLP Master - ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr)
+VOIDMETA:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
 
 ```
 id = tokenIdHex (Hexidecimal)

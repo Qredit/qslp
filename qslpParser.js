@@ -71,8 +71,8 @@ const delAsync = promisify(rclient.del).bind(rclient);
 const QSLPSchema = require("./lib/qslpSchema");
 const qslp = new QSLPSchema.default();
 
-const QSLPactivationHeight = 16652790;
-const QSLPactivationBlockId = 'bbaa2702e5cef0f7800891d1c3089b35eca88a6d85c064a03e8ca637938ffc84';
+const QSLPactivationHeight = 1579800;
+const QSLPactivationBlockId = '2d807820a21846be886e7cc96c1ce889b02a23db0d2d47113b80927c263276e6';
 
 // Declaring some variable defaults
 
@@ -100,11 +100,12 @@ rclient.on('error', function () {
 	error_handle("Error in Redis", 'redisConnection');
 });
 
-// Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node QSLPApiv2.js true)
 
 rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 
-	if ((process.argv.length == 3 && (process.argv[2] == '1' || process.argv[2] == 'true')) || lbreply == null || parseInt(lbreply) != lbreply) {
+	// Resync/Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node qslpParser.js resync)
+
+	if ((process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null || parseInt(lbreply) != lbreply) {
 
 		(async () => {
 
@@ -198,8 +199,32 @@ rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 		})();
 
 	}
-	else {
-		// Initialze things
+	else if (process.argv.length == 4 && process.argv[2] == 'rollback') 
+	{
+	
+		/* Roll back to specified blockheight and resume from there:   node qslpParser.js rollback 122343 */
+
+		(async () => {
+
+			var rollbackHeight = parseInt(process.argv[3]);
+
+			var mclient = await qdb.connect();
+			qdb.setClient(mclient);
+			
+			console.log("Performing Rollback to Block Height: " + rollbackHeight);
+		
+			await rebuildDbFromJournal(rollbackHeight, qdb);
+
+			console.log("Restarting...");
+
+			process.exit(-1);
+
+		})();
+
+	}
+	else 
+	{
+		// These aren't the droids we are looking for, move along...  
 		initialize();
 	}
 
@@ -273,7 +298,7 @@ function downloadChain() {
 				lastBlockId = message.rows[0].id;
 			}
 
-			console.log('Ark Current Top Height #' + topHeight + '.....');
+			console.log('Current Block Height: #' + topHeight + '.....');
 
 		}
 
@@ -299,6 +324,8 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 	return new Promise((resolve) => {
 
 		(async () => {
+		
+			journalHeight = parseInt(journalHeight);
 
 			var startTime = (new Date()).getTime();
 
@@ -326,66 +353,82 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				var findLastJournal = await qdb.findDocumentsWithId('journal', {}, 1, { "_id": -1 }, 0);
 
 				var lastJournalEntry = findLastJournal[0];
+				
+				if (!lastJournalEntry)
+				{
+					// Something Broke.  Start over....
 
-				var lastJournalID = lastJournalEntry['_id'];
-				var lastJournalBlockId = lastJournalEntry['blockId'];
-				var lastJournalBlockHeight = lastJournalEntry['blockHeight'];
+					rclient.del('QSLP_lastblockid', function (err, reply) {
+						rclient.del('QSLP_lastscanblock', function (err, reply) {
+							process.exit(-1);
+						});
+					});
+				
+				}
+				else
+				{
 
-				console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
+					var lastJournalID = lastJournalEntry['_id'];
+					var lastJournalBlockId = lastJournalEntry['blockId'];
+					var lastJournalBlockHeight = lastJournalEntry['blockHeight'];
 
-				// Update Counters to new top Journal
-				await qdb.updateDocument('counters', { "_id": "journal" }, { "seq": lastJournalID });
+					console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
 
-				// Rebuild DB via Journal
+					// Update Counters to new top Journal
+					await qdb.updateDocument('counters', { "_id": "journal" }, { "seq": lastJournalID });
 
-				var jLimit = 1000;
-				var jStart = 0;
-				var jContinue = 1;
+					// Rebuild DB via Journal
 
-				while (jContinue == 1) {
+					var jLimit = 1000;
+					var jStart = 0;
+					var jContinue = 1;
 
-					var getJournals = await qdb.findDocumentsWithId('journal', {}, jLimit, { "_id": 1 }, jStart);
+					while (jContinue == 1) {
 
-					console.log('Rebuilding ' + getJournals.length + ' Journal Entries....');
+						var getJournals = await qdb.findDocumentsWithId('journal', {}, jLimit, { "_id": 1 }, jStart);
 
-					jStart = jStart + jLimit;
-					if (getJournals.length == 0) jContinue = 0;
+						console.log('Rebuilding ' + getJournals.length + ' Journal Entries....');
 
-					for (ji = 0; ji < getJournals.length; ji++) {
+						jStart = jStart + jLimit;
+						if (getJournals.length == 0) jContinue = 0;
 
-						var journalItem = getJournals[ji];
+						for (ji = 0; ji < getJournals.length; ji++) {
 
-						var journalAction = journalItem['action'];
-						var journalCollection = journalItem['collectionName'];
-						var journalField = JSON.parse(journalItem['fieldData']);
-						var journalRecord = JSON.parse(journalItem['recordData']);
+							var journalItem = getJournals[ji];
 
-						if (journalAction == 'insert') {
+							var journalAction = journalItem['action'];
+							var journalCollection = journalItem['collectionName'];
+							var journalField = JSON.parse(journalItem['fieldData']);
+							var journalRecord = JSON.parse(journalItem['recordData']);
 
-							await qdb.insertDocument(journalCollection, journalRecord);
+							if (journalAction == 'insert') {
 
-						}
-						else if (journalAction == 'update') {
+								await qdb.insertDocument(journalCollection, journalRecord);
 
-							await qdb.updateDocument(journalCollection, journalField, journalRecord);
+							}
+							else if (journalAction == 'update') {
 
-						}
-						else {
-							console.log('UNKNOWN Journal Action - FATAL');
+								await qdb.updateDocument(journalCollection, journalField, journalRecord);
 
-							rclient.del('QSLP_lastblockid', function (err, reply) {
-								rclient.del('QSLP_lastscanblock', function (err, reply) {
-									process.exit(-1);
+							}
+							else {
+								console.log('UNKNOWN Journal Action - FATAL');
+
+								rclient.del('QSLP_lastblockid', function (err, reply) {
+									rclient.del('QSLP_lastscanblock', function (err, reply) {
+										process.exit(-1);
+									});
 								});
-							});
+
+							}
 
 						}
 
 					}
 
-				}
+					console.log('Journal Rebuild Completed..');
 
-				console.log('Journal Rebuild Completed..');
+				}
 
 			} catch (e) {
 
@@ -449,7 +492,7 @@ function doScan() {
 
 			//
 
-			console.log('Scanning from block #' + scanBlockId + '.....');
+			console.log('Scanning from Height: #' + scanBlockId + '.....');
 
 			(async () => {
 
@@ -461,7 +504,7 @@ function doScan() {
 
 				if (message && message.rows) currentHeight = parseInt(message.rows[0].height);
 
-				console.log('Current Blockchain Height: ' + currentHeight);
+				console.log('New QSLP Block Height: #' + currentHeight);
 
 				var mclient = await qdb.connect();
 				qdb.setClient(mclient);
@@ -496,7 +539,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 					scanLockTimer = Math.floor(new Date() / 1000);
 
-					if (count % 1000 == 0 || count == max) console.log("Scanning: " + count);
+					if (count % 1000 == 0 || count == max) console.log("Next scan from Height: #" + count);
 
 					pgclient.query('SELECT id, number_of_transactions, height, previous_block FROM blocks WHERE height = $1 LIMIT 1', [count], (err, message) => {
 
@@ -743,7 +786,7 @@ function newblocknotify() {
 
 	lastBlockNotify = Math.floor(new Date() / 1000);
 
-	console.log('New Block Notify..');
+	console.log('Found New Blocks............');
 
 	if (scanLock == true) {
 		// TODO:  Check if it is a stale lock
@@ -827,3 +870,4 @@ function error_handle(error, caller = 'unknown', severity = 'error') {
 	});
 
 }
+
