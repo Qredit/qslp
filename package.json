@@ -27,7 +27,7 @@
     "npm": "^6.13.4",
     "pg": "^7.17.0",
     "public-ip": "^3.2.0",
-    "arkjs": "git+https://github.com/Ark/qredit-js.git#ark",
+    "arkjs": "git+https://github.com/qredit/qredit-js.git#ark",
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
