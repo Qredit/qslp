@@ -1849,8 +1849,8 @@ function initialize() {
 		// Defaults
 		validatePeer('95.217.184.222', 8001); //aslp
 		validatePeer('135.181.151.134', 8001); //aslp2
-		validatePeer('95.217.12.172', 8001); //aslp3
-		validatePeer('95.216.171.167', 8001); //aslp4
+		//validatePeer('95.217.12.172', 8001); //aslp3
+		//validatePeer('95.216.171.167', 8001); //aslp4
 
 
 	})();
