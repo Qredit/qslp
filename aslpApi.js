@@ -34,11 +34,11 @@ var iniconfig = ini.parse(fs.readFileSync('aslp.ini', 'utf-8'))
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
 const mongodatabase = iniconfig.mongo_database;
-const qdbapi = new aslpDB.default(mongoconnecturl, mongodatabase);
+
 
 // MongoDB Library and Connection
 const aslpDB = require("./lib/aslpDB");
-
+const qdbapi = new aslpDB.default(mongoconnecturl, mongodatabase);
 // Mongo Connect
 
 connectDb();
