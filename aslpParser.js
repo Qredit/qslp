@@ -72,7 +72,7 @@ const ASLPSchema = require("./lib/aslpSchema");
 const aslp = new ASLPSchema.default();
 
 const ASLPactivationHeight = 17891337;
-const ASLPactivationBlockId = '2d807820a21846be886e7cc96c1ce889b02a23db0d2d47113b80927c263276e6';
+const ASLPactivationBlockId = '59a86d78b369c3cbc914101d4f940ad2004d6b1c4e716dc9e67004311b3a07a3';
 
 // Declaring some variable defaults
 
