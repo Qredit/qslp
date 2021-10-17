@@ -20,7 +20,7 @@ const SparkMD5 = require('spark-md5');  		 // Faster than crypto for md5
 const { promisify } = require('util');			 // Promise functions
 const asyncv3 = require('async');			 // Async Helper
 const { Client } = require('pg');				 // Postgres
-const { Transactions: ArkTransactions, Managers: ArkManagers, Utils: ArkUtils, Identities: ArkIdentities } = require("@ark/crypto");
+const { Transactions: ArkTransactions, Managers: ArkManagers, Utils: ArkUtils, Identities: ArkIdentities } = require("@qredit/crypto");
 
 
 const { onShutdown } = require('node-graceful-shutdown');
