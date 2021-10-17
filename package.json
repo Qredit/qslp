@@ -8,7 +8,7 @@
     "url": "git+https://github.com/qredit/qslp.git#ark"
   },
   "dependencies": {
-    "@qredit/crypto": "git+https://github.com/qredit/crypto.git#ark",
+    "@arkecosystem/crypto": "^3.1.0",
     "assert": "^2.0.0",
     "async": "^3.1.0",
     "basic-auth": "^2.0.1",
