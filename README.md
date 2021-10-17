@@ -1,57 +1,62 @@
-# QSLP  -- Version 2.0.0
-Qredit Side Ledger Protocol - An easy to use token system for both fungible QSLP-1 and QSLP-2 non-fungible tokens.
+# ASLP -- Version 2.0.0
 
-This is a sidechain for the Qredit network to integrate Simple Token issuance and management
+Ark Side Ledger Protocol - An easy to use token system for both fungible ASLP-1 and ASLP-2 non-fungible tokens.
 
-This must be running on a Qredit Relay or Qredit Full node.
+This is a sidechain for the Ark network to integrate Simple Token issuance and management
 
-************************************
-Enable Webhooks in your Qredit Node:
+This must be running on a Ark Relay or Ark Full node.
+
+---
+
+Enable Webhooks in your Ark Node:
+
 ```
-nano .config/qredit-core/mainnet/.env
+nano .config/ark-core/mainnet/.env
 ```
 
 Make sure the env file has these items:
+
 ```
 CORE_WEBHOOKS_ENABLED=true
 CORE_WEBHOOKS_HOST=0.0.0.0
 CORE_WEBHOOKS_PORT=5104
 ```
-Go back to user root directory and restart qredit nodes to enable your new .env settings
+
+Go back to user root directory and restart ark nodes to enable your new .env settings
+
 ```
 cd && pm2 restart all
 ```
 
-Clone this repo and enter qslp directory
+Clone this repo and enter aslp directory
+
 ```
-git clone https://github.com/qredit/qslp && cd qslp
+git clone https://github.com/qredit/aslp && cd aslp
 ```
 
 Give permissions to execute the Sidechain Menu
-```
-chmod +x qslp.sh
-```
 
-Start qslp menu
 ```
-./qslp.sh
+chmod +x aslp.sh
 ```
 
+Start aslp menu
 
+```
+./aslp.sh
+```
 
+---
 
-************************************
+The server runs on the port set in the ini file. If you want to run on a port < 1000, you'll need to run aslpApi.js with sudo or use Nginx proxy
 
-
-The server runs on the port set in the ini file.   If you want to run on a port < 1000, you'll need to run qslpApi.js with sudo or use Nginx proxy
-
-Currently the system supports the QSLP contract schema (v15).   QSLP contract schemas are backwards compatible.
+Currently the system supports the ASLP contract schema (v15). ASLP contract schemas are backwards compatible.
 
 Example JSON Object for Genesis:
 
 ```
 {
-	qslp1: {
+	aslp1: {
 		tp: 'GENESIS',
 		de: 8,
 		sy: 'TEST',
@@ -68,11 +73,10 @@ Example JSON Object for Genesis:
 Stringified, this object will look like this for submitting to the network:
 
 ```
-{qslp1: {tp: 'GENESIS',de: 8,sy: 'TEST',na: 'Test Token',du: 'https://test.com',qt: 100000,no: 'notes',pa: false,mi: false}}
+{aslp1: {tp: 'GENESIS',de: 8,sy: 'TEST',na: 'Test Token',du: 'https://test.com',qt: 100000,no: 'notes',pa: false,mi: false}}
 ```
 
-
-QSLP (Schema v15) Contract Methods:
+ASLP (Schema v15) Contract Methods:
 
 ```
 GENESIS - Create a new token
@@ -88,7 +92,7 @@ UNFREEZE - UnFreeze balance for Token @ Address.
 
 JSON Variables:
 
-GENESIS:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+GENESIS: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 de = Decimal Places  (Integer: 0-8)
@@ -101,7 +105,7 @@ pa = Pausable (Boolean:  Default false)  (Optional)
 mi = Mintable (Boolean:  Default false)  (Optional)
 ```
 
-BURN:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+BURN: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -109,7 +113,7 @@ qt = Quantity (Integer)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-MINT:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+MINT: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -117,7 +121,7 @@ qt = Quantity (Integer)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-SEND:  (Recipent Address is whom you are sending Tokens to)
+SEND: (Recipent Address is whom you are sending Tokens to)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -125,43 +129,42 @@ qt = Quantity (Integer)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-PAUSE:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+PAUSE: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-RESUME:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+RESUME: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-NEWOWNER:  (Recipent Address is whom you are reassigning contract to)
+NEWOWNER: (Recipent Address is whom you are reassigning contract to)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-FREEZE:  (Recipent Address is whom you want to freeze)
+FREEZE: (Recipent Address is whom you want to freeze)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-UNFREEZE:  (Recipent Address is whom you want to unfreeze)
+UNFREEZE: (Recipent Address is whom you want to unfreeze)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-
-QSLP-2 (Schema v15) Contract Methods:
+ASLP-2 (Schema v15) Contract Methods:
 
 ```
 GENESIS - Create a new token
@@ -177,7 +180,7 @@ VOIDMETA - Mark a previously added meta data as void
 
 JSON Variables:
 
-GENESIS:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+GENESIS: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 sy = Symbol / Ticker  (String: 3-8 characters)
@@ -187,48 +190,49 @@ no = Notes  (String: Max 32 Characters)  (Optional)
 pa = Pausable (Boolean:  Default false)  (Optional)
 ```
 
-PAUSE:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+PAUSE: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-RESUME:  (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
-
-```
-id = tokenIdHex (Hexidecimal)
-no = Notes  (String: Max 32 Characters)  (Optional)
-```
-NEWOWNER:  (Recipent Address is whom you are reassigning contract to)
+RESUME: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-AUTHMETA:  (Recipent Address is whom you are authorizing to add metadata)
+NEWOWNER: (Recipent Address is whom you are reassigning contract to)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-REVOKEMETA:	  (Recipent Address is whom you are revoking access to add metadata)
+AUTHMETA: (Recipent Address is whom you are authorizing to add metadata)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional)
 ```
 
-CLONE:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+REVOKEMETA: (Recipent Address is whom you are revoking access to add metadata)
+
+```
+id = tokenIdHex (Hexidecimal)
+no = Notes  (String: Max 32 Characters)  (Optional)
+```
+
+CLONE: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)
 no = Notes  (String: Max 32 Characters)  (Optional - Leaveing blank will copy notes from original, providing will create new notes)
 ```
 
-ADDMETA:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+ADDMETA: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)
@@ -237,7 +241,7 @@ na = Name  (String: Max 32 Characters --  name of meta info)
 dt = Data  (String -- stringified data for your meta)
 ```
 
-VOIDMETA:   (Recipient Address is QSLP Master - XQRJgWWdxrUqn7hnrtMWbVh7wgz2tP6hnh)
+VOIDMETA: (Recipient Address is ASLP Master - AXQRDotxfrL3cV87NcoLeAgswBECoVs9Sv)
 
 ```
 id = tokenIdHex (Hexidecimal)

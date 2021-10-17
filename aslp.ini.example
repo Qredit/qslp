@@ -1,19 +1,19 @@
 mongo_connection_string = 'mongodb://localhost:27017'
-mongo_database = 'qreditslp'
+mongo_database = 'arkslp'
 
-pg_username = 'qredit'
+pg_username = 'ark'
 pg_password = 'password'
-pg_database = 'qredit_mainnet'
+pg_database = 'ark_mainnet'
 
 redis_port = 6379
 redis_host = '127.0.0.1'
 
 api_port = 8001
 
-seed_node = 'https://qredit.cloud/api/'
+seed_node = 'https://explorer.ark.io/api'
 api_node = 'http://127.0.0.1:5103/api/v2'
 webhook_node = 'http://127.0.0.1:5104/api'
-qslp_webhook = 'http://127.0.0.1/api/newblocknotify'
+aslp_webhook = 'http://127.0.0.1/api/newblocknotify'
 qae_webhook = 'http://127.0.0.1/api/newblocknotify'
 
 webhooks_enabled = 0

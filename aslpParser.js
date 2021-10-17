@@ -1,12 +1,12 @@
 /*
 *
-* QSLP - Version 2.0.0
+* ASLP - Version 2.0.0
 *
-* Qredit Side Ledger Protocol
+* Ark Side Ledger Protocol
 *
-* A simplified token management system for the Qredit network
+* A simplified token management system for the Ark network
 *
-* QSLPParser - Parse the blockchain for QSLP items
+* ASLPParser - Parse the blockchain for ASLP items
 *
 */
 
@@ -20,7 +20,7 @@ const SparkMD5 = require('spark-md5');  		 // Faster than crypto for md5
 const { promisify } = require('util');			 // Promise functions
 const asyncv3 = require('async');			 // Async Helper
 const { Client } = require('pg');				 // Postgres
-const { Transactions: QreditTransactions, Managers: QreditManagers, Utils: QreditUtils, Identities: QreditIdentities } = require("@qredit/crypto");
+const { Transactions: ArkTransactions, Managers: ArkManagers, Utils: ArkUtils, Identities: ArkIdentities } = require("@ark/crypto");
 
 
 const { onShutdown } = require('node-graceful-shutdown');
@@ -48,15 +48,15 @@ onShutdown("parser", async function () {
 
 });
 
-var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
+var iniconfig = ini.parse(fs.readFileSync('aslp.ini', 'utf-8'))
 
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
 const mongodatabase = iniconfig.mongo_database;
 
 // MongoDB Library
-const QSLPDB = require("./lib/qslpDB");
-const qdb = new QSLPDB.default(mongoconnecturl, mongodatabase);
+const ASLPDB = require("./lib/aslpDB");
+const qdb = new ASLPDB.default(mongoconnecturl, mongodatabase);
 
 // Connect to Redis and setup some async call definitions
 const rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
@@ -67,12 +67,12 @@ const getAsync = promisify(rclient.get).bind(rclient);
 const setAsync = promisify(rclient.set).bind(rclient);
 const delAsync = promisify(rclient.del).bind(rclient);
 
-// QSLP-1 Token Schema
-const QSLPSchema = require("./lib/qslpSchema");
-const qslp = new QSLPSchema.default();
+// ASLP-1 Token Schema
+const ASLPSchema = require("./lib/aslpSchema");
+const aslp = new ASLPSchema.default();
 
-const QSLPactivationHeight = 1579800;
-const QSLPactivationBlockId = '2d807820a21846be886e7cc96c1ce889b02a23db0d2d47113b80927c263276e6';
+const ASLPactivationHeight = 17891337;
+const ASLPactivationBlockId = '2d807820a21846be886e7cc96c1ce889b02a23db0d2d47113b80927c263276e6';
 
 // Declaring some variable defaults
 
@@ -101,9 +101,9 @@ rclient.on('error', function () {
 });
 
 
-rclient.get('QSLP_lastscanblock', function (err, lbreply) {
+rclient.get('ASLP_lastscanblock', function (err, lbreply) {
 
-	// Resync/Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node qslpParser.js resync)
+	// Resync/Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node aslpParser.js resync)
 
 	if ((process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null || parseInt(lbreply) != lbreply) {
 
@@ -113,11 +113,11 @@ rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 			console.log("Forcing a Rescan....");
 			console.log("--------------------");
 
-			await delAsync('QSLP_lastscanblock');
-			await delAsync('QSLP_lastblockid');
+			await delAsync('ASLP_lastscanblock');
+			await delAsync('ASLP_lastblockid');
 
-			await setAsync('QSLP_lastscanblock', QSLPactivationHeight);
-			await setAsync('QSLP_lastblockid', QSLPactivationBlockId);
+			await setAsync('ASLP_lastscanblock', ASLPactivationHeight);
+			await setAsync('ASLP_lastblockid', ASLPactivationBlockId);
 
 			// Remove items from MongoDB
 
@@ -189,7 +189,7 @@ rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 				await qdb.removeDocuments('counters', {});
 			}
 
-			await qslp.indexDatabase(qdb);
+			await aslp.indexDatabase(qdb);
 
 			await qdb.close();
 
@@ -199,10 +199,9 @@ rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 		})();
 
 	}
-	else if (process.argv.length == 4 && process.argv[2] == 'rollback') 
-	{
-	
-		/* Roll back to specified blockheight and resume from there:   node qslpParser.js rollback 122343 */
+	else if (process.argv.length == 4 && process.argv[2] == 'rollback') {
+
+		/* Roll back to specified blockheight and resume from there:   node aslpParser.js rollback 122343 */
 
 		(async () => {
 
@@ -210,9 +209,9 @@ rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 
 			var mclient = await qdb.connect();
 			qdb.setClient(mclient);
-			
+
 			console.log("Performing Rollback to Block Height: " + rollbackHeight);
-		
+
 			await rebuildDbFromJournal(rollbackHeight, qdb);
 
 			console.log("Restarting...");
@@ -222,8 +221,7 @@ rclient.get('QSLP_lastscanblock', function (err, lbreply) {
 		})();
 
 	}
-	else 
-	{
+	else {
 		// These aren't the droids we are looking for, move along...  
 		initialize();
 	}
@@ -268,7 +266,7 @@ function downloadChain() {
 
 	(async () => {
 
-		var doresync = await getAsync('QSLP_resyncfromjournalheight');
+		var doresync = await getAsync('ASLP_resyncfromjournalheight');
 
 		if (doresync != null) {
 
@@ -279,7 +277,7 @@ function downloadChain() {
 
 			await rebuildDbFromJournal(parseInt(doresync), qdb);
 
-			await delAsync('QSLP_resyncfromjournalheight');
+			await delAsync('ASLP_resyncfromjournalheight');
 
 			await qdb.close();
 
@@ -324,7 +322,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 	return new Promise((resolve) => {
 
 		(async () => {
-		
+
 			journalHeight = parseInt(journalHeight);
 
 			var startTime = (new Date()).getTime();
@@ -353,20 +351,18 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				var findLastJournal = await qdb.findDocumentsWithId('journal', {}, 1, { "_id": -1 }, 0);
 
 				var lastJournalEntry = findLastJournal[0];
-				
-				if (!lastJournalEntry)
-				{
+
+				if (!lastJournalEntry) {
 					// Something Broke.  Start over....
 
-					rclient.del('QSLP_lastblockid', function (err, reply) {
-						rclient.del('QSLP_lastscanblock', function (err, reply) {
+					rclient.del('ASLP_lastblockid', function (err, reply) {
+						rclient.del('ASLP_lastscanblock', function (err, reply) {
 							process.exit(-1);
 						});
 					});
-				
+
 				}
-				else
-				{
+				else {
 
 					var lastJournalID = lastJournalEntry['_id'];
 					var lastJournalBlockId = lastJournalEntry['blockId'];
@@ -414,8 +410,8 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 							else {
 								console.log('UNKNOWN Journal Action - FATAL');
 
-								rclient.del('QSLP_lastblockid', function (err, reply) {
-									rclient.del('QSLP_lastscanblock', function (err, reply) {
+								rclient.del('ASLP_lastblockid', function (err, reply) {
+									rclient.del('ASLP_lastscanblock', function (err, reply) {
 										process.exit(-1);
 									});
 								});
@@ -435,16 +431,16 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				console.log('Error During Rollback - FATAL');
 				console.log(e);
 
-				rclient.del('QSLP_lastblockid', function (err, reply) {
-					rclient.del('QSLP_lastscanblock', function (err, reply) {
+				rclient.del('ASLP_lastblockid', function (err, reply) {
+					rclient.del('ASLP_lastscanblock', function (err, reply) {
 						process.exit(-1);
 					});
 				});
 
 			}
 
-			await setAsync('QSLP_lastscanblock', lastJournalBlockHeight);
-			await setAsync('QSLP_lastblockid', lastJournalBlockId);
+			await setAsync('ASLP_lastscanblock', lastJournalBlockHeight);
+			await setAsync('ASLP_lastblockid', lastJournalBlockId);
 
 			var endTime = (new Date()).getTime();
 
@@ -463,13 +459,13 @@ function doScan() {
 	scanLock = true;
 	scanLockTimer = Math.floor(new Date() / 1000);
 
-	rclient.get('QSLP_lastscanblock', function (err, reply) {
+	rclient.get('ASLP_lastscanblock', function (err, reply) {
 
 		if (err) {
 			console.log(err);
 		}
 		else if (reply == null || parseInt(reply) != reply) {
-			scanBlockId = QSLPactivationHeight;
+			scanBlockId = ASLPactivationHeight;
 		}
 		else {
 			scanBlockId = parseInt(reply);
@@ -477,7 +473,7 @@ function doScan() {
 
 		//
 
-		rclient.get('QSLP_lastblockid', function (err, replytwo) {
+		rclient.get('ASLP_lastblockid', function (err, replytwo) {
 
 			if (err) {
 				console.log(err);
@@ -504,7 +500,7 @@ function doScan() {
 
 				if (message && message.rows) currentHeight = parseInt(message.rows[0].height);
 
-				console.log('New QSLP Block Height: #' + currentHeight);
+				console.log('New ASLP Block Height: #' + currentHeight);
 
 				var mclient = await qdb.connect();
 				qdb.setClient(mclient);
@@ -571,8 +567,8 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 											console.log("ThisBlockHeight: " + thisblockheight);
 											console.log("LastScanBlock: " + count);
 
-											rclient.del('QSLP_lastblockid', function (err, reply) {
-												rclient.del('QSLP_lastscanblock', function (err, reply) {
+											rclient.del('ASLP_lastblockid', function (err, reply) {
+												rclient.del('ASLP_lastscanblock', function (err, reply) {
 													process.exit(-1);
 												});
 											});
@@ -597,7 +593,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 									processedItems = false;
 
-									if (parseInt(blocktranscount) > 0 && thisblockheight >= QSLPactivationHeight) {
+									if (parseInt(blocktranscount) > 0 && thisblockheight >= ASLPactivationHeight) {
 
 										pgclient.query('SELECT * FROM transactions WHERE block_id = $1 ORDER BY sequence ASC', [blockidcode], (err, tresponse) => {
 
@@ -622,8 +618,8 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 														txdata.type = origtxdata.type;
 														txdata.amount = origtxdata.amount;
 														txdata.fee = origtxdata.fee;
-														//txdata.sender = qreditjs.crypto.getAddress(origtxdata.sender_public_key);
-														txdata.sender = QreditIdentities.Address.fromPublicKey(origtxdata.sender_public_key);
+														//txdata.sender = arkjs.crypto.getAddress(origtxdata.sender_public_key);
+														txdata.sender = ArkIdentities.Address.fromPublicKey(origtxdata.sender_public_key);
 														txdata.senderPublicKey = origtxdata.sender_public_key;
 														txdata.recipient = origtxdata.recipient_id
 														if (origtxdata.vendor_field != null && origtxdata.vendor_field != '') {
@@ -655,14 +651,14 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 																var parsejson = JSON.parse(txdata.vendorField);
 
-																if (parsejson.qslp1) {
+																if (parsejson.aslp1) {
 
 																	console.log(txdata);
 
 																	var txmessage = await qdb.findDocuments('transactions', { "txid": txdata.id });
 																	if (txmessage.length == 0) {
 																		try {
-																			var QSLPresult = await qslp.parseTransaction(txdata, blockdata, qdb);
+																			var ASLPresult = await aslp.parseTransaction(txdata, blockdata, qdb);
 																		} catch (e) {
 																			error_handle(e, 'parseTransaction', 'error');
 																		}
@@ -673,14 +669,14 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 																	}
 
 																}
-																else if (parsejson.qslp2) {
+																else if (parsejson.aslp2) {
 
 																	console.log(txdata);
 
 																	var txmessage = await qdb.findDocuments('metadata', { "txid": txdata.id });
 																	if (txmessage.length == 0) {
 																		try {
-																			var QSLPresult = await qslp.parseTransaction(txdata, blockdata, qdb);
+																			var ASLPresult = await aslp.parseTransaction(txdata, blockdata, qdb);
 																		} catch (e) {
 																			error_handle(e, 'parseTransaction', 'error');
 																		}
@@ -702,8 +698,8 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 													// No longer use
 
-													await setAsync('QSLP_lastscanblock', thisblockheight);
-													await setAsync('QSLP_lastblockid', blockidcode);
+													await setAsync('ASLP_lastscanblock', thisblockheight);
+													await setAsync('ASLP_lastblockid', blockidcode);
 
 													callback(null, count);
 
@@ -723,8 +719,8 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 											// No longer use
 
-											await setAsync('QSLP_lastscanblock', thisblockheight);
-											await setAsync('QSLP_lastblockid', blockidcode);
+											await setAsync('ASLP_lastscanblock', thisblockheight);
+											await setAsync('ASLP_lastblockid', blockidcode);
 
 											try {
 												callback(null, count);
@@ -848,7 +844,7 @@ function truncateToDecimals(num, dec = 2) {
 
 function error_handle(error, caller = 'unknown', severity = 'error') {
 
-	var scriptname = 'QSLPParser.js';
+	var scriptname = 'ASLPParser.js';
 
 	console.log("Error Handle has been called!");
 

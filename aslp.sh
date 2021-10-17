@@ -14,7 +14,7 @@ pause(){
 
 one(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "   Installing QSLP and Prerequisites   "
+	echo "   Installing ASLP and Prerequisites   "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sudo apt-get -y install cmatrix
 	sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
@@ -25,7 +25,7 @@ one(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "             Moving config             "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	cp qslp.ini.example qslp.ini
+	cp aslp.ini.example aslp.ini
 	echo "done..."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -35,13 +35,13 @@ one(){
 	echo "done..."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo " Installing Qredit Side Ledger Protocol "
+	echo " Installing Ark Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	yarn install
 	echo "done..."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "       Succesfully Installed QSLP       "
+	echo "       Succesfully Installed ASLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 }
@@ -49,10 +49,10 @@ one(){
 # do something in two()
 two(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "             Stopping QSLP             "
+	echo "             Stopping ASLP             "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	pm2 stop qslpParser.js
-	pm2 stop qslpApi.js
+	pm2 stop aslpParser.js
+	pm2 stop aslpApi.js
 	echo "done..."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -70,73 +70,73 @@ two(){
 	echo "done..."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo " Installing Qredit Side Ledger Protocol "
+	echo " Installing Ark Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	yarn install
 	echo "done..."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "  Launching Qredit Side Ledger Protocol "
+	echo "  Launching Ark Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
-	pm2 start qslpParser.js
+	pm2 start aslpParser.js
 	sleep 1
-	pm2 start qslpApi.js
+	pm2 start aslpApi.js
 	echo "done..."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "        Succesfully Launched QSLP       "
+	echo "        Succesfully Launched ASLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 }
 
 three(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "  Launching Qredit Side Ledger Protocol "
+	echo "  Launching Ark Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
-        pm2 start qslpParser.js
+        pm2 start aslpParser.js
 	sleep 1
-	pm2 start qslpApi.js
+	pm2 start aslpApi.js
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "        Succesfully Launched QSLP       "
+	echo "        Succesfully Launched ASLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 } 
 
 four(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "             Stopping QSLP             "
+	echo "             Stopping ASLP             "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        pm2 stop qslpParser.js
-        pm2 stop qslpApi.js
+        pm2 stop aslpParser.js
+        pm2 stop aslpApi.js
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "             Stopped QSLP              "
+	echo "             Stopped ASLP              "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "  Launching Qredit Side Ledger Protocol "
+	echo "  Launching Ark Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
-        pm2 start qslpParser.js
+        pm2 start aslpParser.js
 	sleep 1
-	pm2 start qslpApi.js
+	pm2 start aslpApi.js
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "        Succesfully Launched QSLP       "
+	echo "        Succesfully Launched ASLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 } 
 
 five(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "             Stopping QSLP             "
+	echo "             Stopping ASLP             "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        pm2 stop qslpParser.js
+        pm2 stop aslpParser.js
         sleep 1
-        pm2 stop qslpApi.js
+        pm2 stop aslpApi.js
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "             Stopped QSLP              "
+	echo "             Stopped ASLP              "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
         pause
@@ -161,11 +161,11 @@ seven(){
 
 eight(){
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "             Stopping QSLP             "
+	echo "             Stopping ASLP             "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
-	pm2 stop qslpParser.js
-        pm2 stop qslpApi.js
+	pm2 stop aslpParser.js
+        pm2 stop aslpApi.js
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "     Pulling Updates from Github       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -183,7 +183,7 @@ eight(){
 	echo "            Resetting Config           "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
-	cp qslp.ini.example qslp.ini
+	cp aslp.ini.example aslp.ini
 	echo "done.."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -193,23 +193,23 @@ eight(){
 	sudo ufw allow 8001
 	echo "done.."
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo " Installing Qredit Side Ledger Protocol "
+	echo " Installing Ark Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
 	yarn install
 	echo "done..."
 	sleep 3
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "  Launching Qredit Side Ledger Protocol "
+	echo "  Launching Ark Side Ledger Protocol "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	sleep 1
-        pm2 start qslpParser.js
+        pm2 start aslpParser.js
 	sleep 1
-	pm2 start qslpApi.js
+	pm2 start aslpApi.js
 	echo "done..."
 	sleep 1
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "        Succesfully Launched QSLP       "
+	echo "        Succesfully Launched ASLP       "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         pause
 }
@@ -238,20 +238,20 @@ ninetynine(){
 show_menus() {
 	clear
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "      Qredit Side Ledger Protocol      "
+	echo "      Ark Side Ledger Protocol      "
 	echo "             Manager v1.1              "
         echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo "           M A I N - M E N U           "
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	echo " "
-	echo " 1. Install QSLP"
-	echo " 2. Update QSLP"
-	echo " 3. Start QSLP"
-	echo " 4. Restart QSLP"
-	echo " 5. Stop QSLP"
+	echo " 1. Install ASLP"
+	echo " 2. Update ASLP"
+	echo " 3. Start ASLP"
+	echo " 4. Restart ASLP"
+	echo " 5. Stop ASLP"
 	echo " 6. PM2 Monitor"
 	echo " 7. View Status"
-	echo " 8. Reinstall, Reset Config & Start QSLP"
+	echo " 8. Reinstall, Reset Config & Start ASLP"
 	echo " 9. Exit"
 	echo "98. Install the Matrix"
 	echo "99. Enter the Matrix."

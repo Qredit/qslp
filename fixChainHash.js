@@ -5,20 +5,20 @@ const SparkMD5 = require('spark-md5');  		 // Faster than crypto for md5
 const { promisify } = require('util');			 // Promise functions
 const asyncv3 = require('async');			 // Async Helper
 
-var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
+var iniconfig = ini.parse(fs.readFileSync('aslp.ini', 'utf-8'))
 
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
 const mongodatabase = iniconfig.mongo_database;
 
 // MongoDB Library
-const qslpDB = require("./lib/qslpDB");
+const aslpDB = require("./lib/aslpDB");
 
 var prevRecordHash = '';
 
 (async () => {
 
-	var qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
+	var qdbapi = new aslpDB.default(mongoconnecturl, mongodatabase);
 
 	var mclient = await qdbapi.connect();
 	qdbapi.setClient(mclient);

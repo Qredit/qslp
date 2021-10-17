@@ -1,11 +1,11 @@
 {
-  "name": "qslpApi",
+  "name": "aslpApi",
   "version": "2.0.0",
-  "description": "This package file is for all the dependencies for the Qredit Side Ledger Protocol API",
-  "main": "qslpApi.js",
+  "description": "This package file is for all the dependencies for the ARK Side Ledger Protocol API",
+  "main": "aslpApi.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qredit/qslp.git"
+    "url": "git+https://github.com/qredit/qslp.git#ark"
   },
   "dependencies": {
     "@qredit/crypto": "^2.7.27",
@@ -27,7 +27,7 @@
     "npm": "^6.13.4",
     "pg": "^7.17.0",
     "public-ip": "^3.2.0",
-    "qreditjs": "git+https://github.com/Qredit/qredit-js.git",
+    "arkjs": "git+https://github.com/Ark/qredit-js.git#ark",
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",

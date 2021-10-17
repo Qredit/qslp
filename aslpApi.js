@@ -1,12 +1,12 @@
 /*
 *
-* qslp - Version 2.0.0
+* aslp - Version 2.0.0
 *
-* Qredit Side Ledger Protocol
+* Ark Side Ledger Protocol
 *
-* A simplified token management system for the Qredit network
+* A simplified token management system for the Ark network
 *
-* qslpApi
+* aslpApi
 *
 */
 
@@ -26,18 +26,18 @@ const publicIp = require('public-ip');		 // a helper to find out what our extern
 const { promisify } = require('util');			 // Promise functions
 const asyncv3 = require('async');			 // Async Helper
 const { Client } = require('pg');				 // Postgres
-const qreditjs = require("qreditjs");
+const arkjs = require("arkjs");
 const path = require('path');
 
-var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
+var iniconfig = ini.parse(fs.readFileSync('aslp.ini', 'utf-8'))
 
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
 const mongodatabase = iniconfig.mongo_database;
-const qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
+const qdbapi = new aslpDB.default(mongoconnecturl, mongodatabase);
 
 // MongoDB Library and Connection
-const qslpDB = require("./lib/qslpDB");
+const aslpDB = require("./lib/aslpDB");
 
 // Mongo Connect
 
@@ -51,28 +51,28 @@ function connectDb() {
 		qdbapi.setClient(mclient);
 
 	})();
-	
+
 }
 
 // Mongo Keep Alive
 
-setInterval(function() {
+setInterval(function () {
 
 	(async () => {
-	
+
 		try {
 
 			var ping = await qdbapi.ping();
-	
+
 		} catch (e) {
-	
+
 			console.log('Error Pinging Mongo... Reconnecting.');
 
 			mclient = await qdbapi.connect();
 			qdbapi.setClient(mclient);
 
 		}
-	
+
 	})();
 
 }, 30000);
@@ -101,7 +101,7 @@ var webhookVerification = '';
 // Trusted seed node
 var seedNode = iniconfig.seed_node;
 
-// Delegate Qredit Address
+// Delegate Ark Address
 var delegateAddress = iniconfig.delegate_address || null;
 
 // Let us know when we connect or have an error with redis
@@ -136,7 +136,7 @@ router.get('/', function (req, res) {
 
 	var thisPeer = myIPAddress + ":" + port;
 
-	res.json({ message: 'Qredit Side Ledger Protocol....	 Please see our API documentation here http://' + thisPeer });
+	res.json({ message: 'Ark Side Ledger Protocol....	 Please see our API documentation here http://' + thisPeer });
 
 });
 
@@ -164,7 +164,7 @@ router.route('/status')
 			var dlblocks = await pgclient.query('SELECT * FROM blocks ORDER BY height DESC LIMIT 1')
 			await pgclient.end()
 
-			var scanned = await getAsync('qslp_lastscanblock');
+			var scanned = await getAsync('aslp_lastscanblock');
 
 			if (dlblocks && dlblocks.rows) {
 				var downloadedblocks = dlblocks.rows[0].height;
@@ -720,7 +720,7 @@ router.route('/getHeight')
 
 		updateaccessstats(req);
 
-		rclient.get('qslp_lastscanblock', function (err, reply) {
+		rclient.get('aslp_lastscanblock', function (err, reply) {
 
 			if (err) {
 				console.log(err);
@@ -855,7 +855,7 @@ router.route('/getJournals/:start/:end')
 
 	});
 
-router.route('/vendor_qslp1_genesis')
+router.route('/vendor_aslp1_genesis')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -879,31 +879,31 @@ router.route('/vendor_qslp1_genesis')
 
 		try {
 
-			var jsonobject = { qslp1: {} };
+			var jsonobject = { aslp1: {} };
 
-			jsonobject.qslp1.tp = "GENESIS";
-			jsonobject.qslp1.de = req.query.decimals;
-			jsonobject.qslp1.sy = req.query.symbol;
-			jsonobject.qslp1.na = req.query.name;
+			jsonobject.aslp1.tp = "GENESIS";
+			jsonobject.aslp1.de = req.query.decimals;
+			jsonobject.aslp1.sy = req.query.symbol;
+			jsonobject.aslp1.na = req.query.name;
 
 
 			var adjustdecimals = parseInt(req.query.decimals);
 			var adjustexponent = '1e' + adjustdecimals;
 			var neweamount = Big(req.query.quantity).times(adjustexponent).toFixed(0);
 
-			jsonobject.qslp1.qt = neweamount;
+			jsonobject.aslp1.qt = neweamount;
 
 			if (req.query.uri)
-				jsonobject.qslp1.du = req.query.uri;
+				jsonobject.aslp1.du = req.query.uri;
 
 			if (req.query.notes)
-				jsonobject.qslp1.no = req.query.notes;
+				jsonobject.aslp1.no = req.query.notes;
 
 			if (req.query.pa)
-				jsonobject.qslp1.pa = req.query.pausable;
+				jsonobject.aslp1.pa = req.query.pausable;
 
 			if (req.query.mi)
-				jsonobject.qslp1.mi = req.query.mintable;
+				jsonobject.aslp1.mi = req.query.mintable;
 
 			res.status(200).send(JSON.stringify(jsonobject));
 
@@ -916,7 +916,7 @@ router.route('/vendor_qslp1_genesis')
 
 	});
 
-router.route('/vendor_qslp1_burn')
+router.route('/vendor_aslp1_burn')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -946,19 +946,19 @@ router.route('/vendor_qslp1_burn')
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
-				var jsonobject = { qslp1: {} };
+				var jsonobject = { aslp1: {} };
 
-				jsonobject.qslp1.tp = "BURN";
-				jsonobject.qslp1.id = req.query.tokenid;
+				jsonobject.aslp1.tp = "BURN";
+				jsonobject.aslp1.id = req.query.tokenid;
 
 				var adjustdecimals = parseInt(decimals);
 				var adjustexponent = '1e' + adjustdecimals;
 				var neweamount = Big(req.query.quantity).times(adjustexponent).toFixed(0);
 
-				jsonobject.qslp1.qt = neweamount;
+				jsonobject.aslp1.qt = neweamount;
 
 				if (req.query.notes)
-					jsonobject.qslp1.no = req.query.notes;
+					jsonobject.aslp1.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -973,7 +973,7 @@ router.route('/vendor_qslp1_burn')
 
 	});
 
-router.route('/vendor_qslp1_mint')
+router.route('/vendor_aslp1_mint')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1003,19 +1003,19 @@ router.route('/vendor_qslp1_mint')
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
-				var jsonobject = { qslp1: {} };
+				var jsonobject = { aslp1: {} };
 
-				jsonobject.qslp1.tp = "MINT";
-				jsonobject.qslp1.id = req.query.tokenid;
+				jsonobject.aslp1.tp = "MINT";
+				jsonobject.aslp1.id = req.query.tokenid;
 
 				var adjustdecimals = parseInt(decimals);
 				var adjustexponent = '1e' + adjustdecimals;
 				var neweamount = Big(req.query.quantity).times(adjustexponent).toFixed(0);
 
-				jsonobject.qslp1.qt = neweamount;
+				jsonobject.aslp1.qt = neweamount;
 
 				if (req.query.notes)
-					jsonobject.qslp1.no = req.query.notes;
+					jsonobject.aslp1.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1030,7 +1030,7 @@ router.route('/vendor_qslp1_mint')
 
 	});
 
-router.route('/vendor_qslp1_send')
+router.route('/vendor_aslp1_send')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1060,19 +1060,19 @@ router.route('/vendor_qslp1_send')
 
 				var decimals = tokeninfo.tokenDetails.decimals;
 
-				var jsonobject = { qslp1: {} };
+				var jsonobject = { aslp1: {} };
 
-				jsonobject.qslp1.tp = "SEND";
-				jsonobject.qslp1.id = req.query.tokenid;
+				jsonobject.aslp1.tp = "SEND";
+				jsonobject.aslp1.id = req.query.tokenid;
 
 				var adjustdecimals = parseInt(decimals);
 				var adjustexponent = '1e' + adjustdecimals;
 				var neweamount = Big(req.query.quantity).times(adjustexponent).toFixed(0);
 
-				jsonobject.qslp1.qt = neweamount;
+				jsonobject.aslp1.qt = neweamount;
 
 				if (req.query.notes)
-					jsonobject.qslp1.no = req.query.notes;
+					jsonobject.aslp1.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1087,7 +1087,7 @@ router.route('/vendor_qslp1_send')
 
 	});
 
-router.route('/vendor_qslp1_pause')
+router.route('/vendor_aslp1_pause')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1113,13 +1113,13 @@ router.route('/vendor_qslp1_pause')
 
 			try {
 
-				var jsonobject = { qslp1: {} };
+				var jsonobject = { aslp1: {} };
 
-				jsonobject.qslp1.tp = "PAUSE";
-				jsonobject.qslp1.id = req.query.tokenid;
+				jsonobject.aslp1.tp = "PAUSE";
+				jsonobject.aslp1.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp1.no = req.query.notes;
+					jsonobject.aslp1.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1134,7 +1134,7 @@ router.route('/vendor_qslp1_pause')
 
 	});
 
-router.route('/vendor_qslp1_resume')
+router.route('/vendor_aslp1_resume')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1160,13 +1160,13 @@ router.route('/vendor_qslp1_resume')
 
 			try {
 
-				var jsonobject = { qslp1: {} };
+				var jsonobject = { aslp1: {} };
 
-				jsonobject.qslp1.tp = "RESUME";
-				jsonobject.qslp1.id = req.query.tokenid;
+				jsonobject.aslp1.tp = "RESUME";
+				jsonobject.aslp1.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp1.no = req.query.notes;
+					jsonobject.aslp1.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1181,7 +1181,7 @@ router.route('/vendor_qslp1_resume')
 
 	});
 
-router.route('/vendor_qslp1_newowner')
+router.route('/vendor_aslp1_newowner')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1207,13 +1207,13 @@ router.route('/vendor_qslp1_newowner')
 
 			try {
 
-				var jsonobject = { qslp1: {} };
+				var jsonobject = { aslp1: {} };
 
-				jsonobject.qslp1.tp = "NEWOWNER";
-				jsonobject.qslp1.id = req.query.tokenid;
+				jsonobject.aslp1.tp = "NEWOWNER";
+				jsonobject.aslp1.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp1.no = req.query.notes;
+					jsonobject.aslp1.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1228,7 +1228,7 @@ router.route('/vendor_qslp1_newowner')
 
 	});
 
-router.route('/vendor_qslp1_freeze')
+router.route('/vendor_aslp1_freeze')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1254,13 +1254,13 @@ router.route('/vendor_qslp1_freeze')
 
 			try {
 
-				var jsonobject = { qslp1: {} };
+				var jsonobject = { aslp1: {} };
 
-				jsonobject.qslp1.tp = "FREEZE";
-				jsonobject.qslp1.id = req.query.tokenid;
+				jsonobject.aslp1.tp = "FREEZE";
+				jsonobject.aslp1.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp1.no = req.query.notes;
+					jsonobject.aslp1.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1275,7 +1275,7 @@ router.route('/vendor_qslp1_freeze')
 
 	});
 
-router.route('/vendor_qslp1_unfreeze')
+router.route('/vendor_aslp1_unfreeze')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1301,13 +1301,13 @@ router.route('/vendor_qslp1_unfreeze')
 
 			try {
 
-				var jsonobject = { qslp1: {} };
+				var jsonobject = { aslp1: {} };
 
-				jsonobject.qslp1.tp = "UNFREEZE";
-				jsonobject.qslp1.id = req.query.tokenid;
+				jsonobject.aslp1.tp = "UNFREEZE";
+				jsonobject.aslp1.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp1.no = req.query.notes;
+					jsonobject.aslp1.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1322,9 +1322,9 @@ router.route('/vendor_qslp1_unfreeze')
 
 	});
 
-// qslp 2
+// aslp 2
 
-router.route('/vendor_qslp2_genesis')
+router.route('/vendor_aslp2_genesis')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1348,20 +1348,20 @@ router.route('/vendor_qslp2_genesis')
 
 		try {
 
-			var jsonobject = { qslp2: {} };
+			var jsonobject = { aslp2: {} };
 
-			jsonobject.qslp2.tp = "GENESIS";
-			jsonobject.qslp2.sy = req.query.symbol;
-			jsonobject.qslp2.na = req.query.name;
+			jsonobject.aslp2.tp = "GENESIS";
+			jsonobject.aslp2.sy = req.query.symbol;
+			jsonobject.aslp2.na = req.query.name;
 
 			if (req.query.uri)
-				jsonobject.qslp2.du = req.query.uri;
+				jsonobject.aslp2.du = req.query.uri;
 
 			if (req.query.notes)
-				jsonobject.qslp2.no = req.query.notes;
+				jsonobject.aslp2.no = req.query.notes;
 
 			if (req.query.pa)
-				jsonobject.qslp2.pa = req.query.pausable;
+				jsonobject.aslp2.pa = req.query.pausable;
 
 			res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1374,7 +1374,7 @@ router.route('/vendor_qslp2_genesis')
 
 	});
 
-router.route('/vendor_qslp2_pause')
+router.route('/vendor_aslp2_pause')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1400,13 +1400,13 @@ router.route('/vendor_qslp2_pause')
 
 			try {
 
-				var jsonobject = { qslp2: {} };
+				var jsonobject = { aslp2: {} };
 
-				jsonobject.qslp2.tp = "PAUSE";
-				jsonobject.qslp2.id = req.query.tokenid;
+				jsonobject.aslp2.tp = "PAUSE";
+				jsonobject.aslp2.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp2.no = req.query.notes;
+					jsonobject.aslp2.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1421,7 +1421,7 @@ router.route('/vendor_qslp2_pause')
 
 	});
 
-router.route('/vendor_qslp2_resume')
+router.route('/vendor_aslp2_resume')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1447,13 +1447,13 @@ router.route('/vendor_qslp2_resume')
 
 			try {
 
-				var jsonobject = { qslp2: {} };
+				var jsonobject = { aslp2: {} };
 
-				jsonobject.qslp2.tp = "RESUME";
-				jsonobject.qslp2.id = req.query.tokenid;
+				jsonobject.aslp2.tp = "RESUME";
+				jsonobject.aslp2.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp2.no = req.query.notes;
+					jsonobject.aslp2.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1468,7 +1468,7 @@ router.route('/vendor_qslp2_resume')
 
 	});
 
-router.route('/vendor_qslp2_newowner')
+router.route('/vendor_aslp2_newowner')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1494,13 +1494,13 @@ router.route('/vendor_qslp2_newowner')
 
 			try {
 
-				var jsonobject = { qslp2: {} };
+				var jsonobject = { aslp2: {} };
 
-				jsonobject.qslp2.tp = "NEWOWNER";
-				jsonobject.qslp2.id = req.query.tokenid;
+				jsonobject.aslp2.tp = "NEWOWNER";
+				jsonobject.aslp2.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp2.no = req.query.notes;
+					jsonobject.aslp2.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1515,7 +1515,7 @@ router.route('/vendor_qslp2_newowner')
 
 	});
 
-router.route('/vendor_qslp2_authmeta')
+router.route('/vendor_aslp2_authmeta')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1541,13 +1541,13 @@ router.route('/vendor_qslp2_authmeta')
 
 			try {
 
-				var jsonobject = { qslp2: {} };
+				var jsonobject = { aslp2: {} };
 
-				jsonobject.qslp2.tp = "AUTHMETA";
-				jsonobject.qslp2.id = req.query.tokenid;
+				jsonobject.aslp2.tp = "AUTHMETA";
+				jsonobject.aslp2.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp2.no = req.query.notes;
+					jsonobject.aslp2.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1562,7 +1562,7 @@ router.route('/vendor_qslp2_authmeta')
 
 	});
 
-router.route('/vendor_qslp2_revokemeta')
+router.route('/vendor_aslp2_revokemeta')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1588,13 +1588,13 @@ router.route('/vendor_qslp2_revokemeta')
 
 			try {
 
-				var jsonobject = { qslp2: {} };
+				var jsonobject = { aslp2: {} };
 
-				jsonobject.qslp2.tp = "REVOKEMETA";
-				jsonobject.qslp2.id = req.query.tokenid;
+				jsonobject.aslp2.tp = "REVOKEMETA";
+				jsonobject.aslp2.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp2.no = req.query.notes;
+					jsonobject.aslp2.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1609,7 +1609,7 @@ router.route('/vendor_qslp2_revokemeta')
 
 	});
 
-router.route('/vendor_qslp2_clone')
+router.route('/vendor_aslp2_clone')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1635,13 +1635,13 @@ router.route('/vendor_qslp2_clone')
 
 			try {
 
-				var jsonobject = { qslp2: {} };
+				var jsonobject = { aslp2: {} };
 
-				jsonobject.qslp2.tp = "CLONE";
-				jsonobject.qslp2.id = req.query.tokenid;
+				jsonobject.aslp2.tp = "CLONE";
+				jsonobject.aslp2.id = req.query.tokenid;
 
 				if (req.query.notes)
-					jsonobject.qslp2.no = req.query.notes;
+					jsonobject.aslp2.no = req.query.notes;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1656,7 +1656,7 @@ router.route('/vendor_qslp2_clone')
 
 	});
 
-router.route('/vendor_qslp2_addmeta')
+router.route('/vendor_aslp2_addmeta')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1682,15 +1682,15 @@ router.route('/vendor_qslp2_addmeta')
 
 			try {
 
-				var jsonobject = { qslp2: {} };
+				var jsonobject = { aslp2: {} };
 
-				jsonobject.qslp2.tp = "ADDMETA";
-				jsonobject.qslp2.id = req.query.tokenid;
-				jsonobject.qslp2.na = req.query.name;
-				jsonobject.qslp2.dt = req.query.data;
+				jsonobject.aslp2.tp = "ADDMETA";
+				jsonobject.aslp2.id = req.query.tokenid;
+				jsonobject.aslp2.na = req.query.name;
+				jsonobject.aslp2.dt = req.query.data;
 
 				if (req.query.chunk)
-					jsonobject.qslp2.ch = req.query.chunk;
+					jsonobject.aslp2.ch = req.query.chunk;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1705,7 +1705,7 @@ router.route('/vendor_qslp2_addmeta')
 
 	});
 
-router.route('/vendor_qslp2_voidmeta')
+router.route('/vendor_aslp2_voidmeta')
 	.get(function (req, res) {
 
 		updateaccessstats(req);
@@ -1731,11 +1731,11 @@ router.route('/vendor_qslp2_voidmeta')
 
 			try {
 
-				var jsonobject = { qslp2: {} };
+				var jsonobject = { aslp2: {} };
 
-				jsonobject.qslp2.tp = "VOIDMETA";
-				jsonobject.qslp2.id = req.query.tokenid;
-				jsonobject.qslp2.tx = req.query.txid;
+				jsonobject.aslp2.tp = "VOIDMETA";
+				jsonobject.aslp2.id = req.query.tokenid;
+				jsonobject.aslp2.tx = req.query.txid;
 
 				res.status(200).send(JSON.stringify(jsonobject));
 
@@ -1815,7 +1815,7 @@ function initialize() {
 
 					currentWebhooks.forEach((row) => {
 
-						if (row.target == iniconfig.qslp_webhook) {
+						if (row.target == iniconfig.aslp_webhook) {
 							var hookId = row.id;
 							console.log("Delete Webhook #" + hookId);
 							request.delete(iniconfig.webhook_node + '/webhooks/' + hookId, { json: true }, function (error, response, body) { });
@@ -1828,7 +1828,7 @@ function initialize() {
 				// Create New Hook
 				var postVars = {};
 				postVars.event = 'block.applied';
-				postVars.target = iniconfig.qslp_webhook;
+				postVars.target = iniconfig.aslp_webhook;
 				postVars.conditions = [{ key: 'height', condition: 'gt', value: 0 }];
 
 				request.post(iniconfig.webhook_node + '/webhooks', { json: true, body: postVars, header: { Authorization: webhookToken } }, function (error, response, body) {
@@ -2160,7 +2160,7 @@ function truncateToDecimals(num, dec = 2) {
 
 function error_handle(error, caller = 'unknown', severity = 'error') {
 
-	var scriptname = 'qslpApi.js';
+	var scriptname = 'aslpApi.js';
 
 	console.log("Error Handle has been called!");
 

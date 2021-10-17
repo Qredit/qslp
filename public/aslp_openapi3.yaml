@@ -1,10 +1,10 @@
 openapi: 3.0.1
 info:
-  title: QSLP API
+  title: ASLP API
   description: |
-    API Documentation for the QSLP v1 & v2 API
+    API Documentation for the ASLP v1 & v2 API
     <h4>API Endpoint URL</h4>
-    The endpoint for our REST API is:  <code>https://qslp.qredit.cloud/api</code>
+    The endpoint for our REST API is:  <code>https://aslp.qredit.cloud/api</code>
     <br /><br />
     <h4>Datetime Formatting</h4>
     Unless otherwise stated, all timestamps are returned in ISO8601 format in UTC. Example: "2018-04-01T00:00:00Z" or "2018-04-01T00:00:00.000Z".   If a timestamp is returned as an Integer, then that is a Unix timestamp.
@@ -83,38 +83,38 @@ info:
     </table>
   version: 1.0.2
 servers:
-- url: https://qslp.qredit.cloud/api
+  - url: https://aslp.qredit.cloud/api
 paths:
   /status:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get system status
       description: |
-        Get a some basic information about the QSLP system status
+        Get a some basic information about the ASLP system status
       responses:
         200:
           description: Status Info
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Status'
+                $ref: "#/components/schemas/Status"
   /tokens:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get a listing of tokens
       parameters:
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           description: Token List
@@ -123,75 +123,75 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Token'
+                  $ref: "#/components/schemas/Token"
         400:
           description: Tokens not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /token/{id}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get token info
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Token ID Hex
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token ID Hex
       responses:
         200:
           description: Token Information
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: "#/components/schemas/Token"
         400:
           description: Currency not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /tokenByTxid/{txid}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get token info by transaction id of creation
       parameters:
-      - name: txid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Transaction ID of genesis
+        - name: txid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Transaction ID of genesis
       responses:
         200:
           description: Token Information
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: "#/components/schemas/Token"
         400:
           description: Currency not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /tokensByOwner/{address}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get token info by address of owner
       parameters:
-      - name: address
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Qredit address
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ark address
       responses:
         200:
           description: Token Information
@@ -200,54 +200,54 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Token'
+                  $ref: "#/components/schemas/Token"
         400:
           description: Currency not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /tokenWithMeta/{id}:
     get:
       tags:
-      - QSLP2
+        - ASLP2
       summary: Get token info with meta data
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Token ID Hex
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token ID Hex
       responses:
         200:
           description: Token Information
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TokenWithMeta'
+                $ref: "#/components/schemas/TokenWithMeta"
         400:
           description: Currency not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /addresses:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get a listing of token addresses
       parameters:
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           description: Address List
@@ -257,26 +257,26 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/AddressQSLP1'
-                  - $ref: '#/components/schemas/AddressQSLP2'
+                    - $ref: "#/components/schemas/AddressASLP1"
+                    - $ref: "#/components/schemas/AddressASLP2"
         400:
           description: Address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /addresses/{address}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get all tokens for an address
       parameters:
-      - name: address
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Qredit address
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ark address
       responses:
         200:
           description: Address List
@@ -286,26 +286,26 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/AddressQSLP1'
-                  - $ref: '#/components/schemas/AddressQSLP2'
+                    - $ref: "#/components/schemas/AddressASLP1"
+                    - $ref: "#/components/schemas/AddressASLP2"
         400:
           description: Address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /addressesByTokenId/{tokenid}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get all addresses for a token
       parameters:
-      - name: tokenid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Token ID Hex
+        - name: tokenid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token ID Hex
       responses:
         200:
           description: Address List
@@ -315,32 +315,32 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/AddressQSLP1'
-                  - $ref: '#/components/schemas/AddressQSLP2'
+                    - $ref: "#/components/schemas/AddressASLP1"
+                    - $ref: "#/components/schemas/AddressASLP2"
         400:
           description: Address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /balance/{tokenid}/{address}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get human readable balance for address/tokenid
       parameters:
-      - name: tokenid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Token ID Hex
-      - name: address
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Qredit Address
+        - name: tokenid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token ID Hex
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ark Address
       responses:
         200:
           description: Balance
@@ -354,19 +354,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /transaction/{txid}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get a listing of tokens
       parameters:
-      - name: txid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Transaction ID
+        - name: txid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Transaction ID
       responses:
         200:
           description: Transaction Information
@@ -374,26 +374,26 @@ paths:
             application/json:
               schema:
                 oneOf:
-                - $ref: '#/components/schemas/TransactionQSLP1'
-                - $ref: '#/components/schemas/TransactionQSLP2'
+                  - $ref: "#/components/schemas/TransactionASLP1"
+                  - $ref: "#/components/schemas/TransactionASLP2"
         400:
           description: Transaction not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /transactions/{tokenid}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get a listing of transactions
       parameters:
-      - name: tokenid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Token ID
+        - name: tokenid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token ID
       responses:
         200:
           description: Transaction List
@@ -403,32 +403,32 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/TransactionQSLP1'
-                  - $ref: '#/components/schemas/TransactionQSLP2'
+                    - $ref: "#/components/schemas/TransactionASLP1"
+                    - $ref: "#/components/schemas/TransactionASLP2"
         400:
           description: Tokens not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /transactions/{tokenid}/{address}:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get a listing of transactions
       parameters:
-      - name: tokenid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Token ID
-      - name: address
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Qredit Address
+        - name: tokenid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token ID
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ark Address
       responses:
         200:
           description: Transaction List
@@ -438,30 +438,30 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/TransactionQSLP1'
-                  - $ref: '#/components/schemas/TransactionQSLP2'
+                    - $ref: "#/components/schemas/TransactionASLP1"
+                    - $ref: "#/components/schemas/TransactionASLP2"
         400:
           description: Tokens not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /transactions:
     get:
       tags:
-      - QSLP1/QSLP2
+        - ASLP1/ASLP2
       summary: Get a listing of transactions
       parameters:
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           description: Transaction List
@@ -471,26 +471,26 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: '#/components/schemas/TransactionQSLP1'
-                  - $ref: '#/components/schemas/TransactionQSLP2'
+                    - $ref: "#/components/schemas/TransactionASLP1"
+                    - $ref: "#/components/schemas/TransactionASLP2"
         400:
           description: Tokens not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /metadata/{txid}:
     get:
       tags:
-      - QSLP2
+        - ASLP2
       summary: Get metadata by txid
       parameters:
-      - name: txid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Transaction ID of transaction containing metadata
+        - name: txid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Transaction ID of transaction containing metadata
       responses:
         200:
           description: MetaData Information
@@ -499,35 +499,35 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MetaData'
+                  $ref: "#/components/schemas/MetaData"
         400:
           description: Currency not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /metadata/{tokenid}:
     get:
       tags:
-      - QSLP2
+        - ASLP2
       summary: Get metadata by token id
       parameters:
-      - name: tokenid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Token ID hexcode to get metadata for
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
+        - name: tokenid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token ID hexcode to get metadata for
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           description: MetaData Information
@@ -536,41 +536,41 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MetaData'
+                  $ref: "#/components/schemas/MetaData"
         400:
           description: Currency not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
   /metadata/{tokenid}/{address}:
     get:
       tags:
-      - QSLP2
+        - ASLP2
       summary: Get metadata by token id & poster address
       parameters:
-      - name: tokenid
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Token ID hexcode to get metadata for
-      - name: address
-        in: path
-        required: true
-        schema:
-          type: string
-        description:  Qredit address of the metadata poster
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
+        - name: tokenid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token ID hexcode to get metadata for
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ark address of the metadata poster
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           description: MetaData Information
@@ -579,61 +579,61 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MetaData'
+                  $ref: "#/components/schemas/MetaData"
         400:
           description: Currency not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_genesis:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_genesis:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:GENESIS
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:GENESIS
       parameters:
-      - name: decimals
-        in: query
-        required: true
-        schema:
-          type: integer
-        description: Number of decimal places the token has
-      - name: symbol
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: name
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: uri
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: quantity
-        in: query
-        required: true
-        schema:
-          type: string
-        description: Human readable quantity, such as "100.999"
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: pausable
-        in: query
-        required: false
-        schema:
-          type: boolean
-      - name: mintable
-        in: query
-        required: false
-        schema:
-          type: boolean
+        - name: decimals
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Number of decimal places the token has
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: uri
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Human readable quantity, such as "100.999"
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: pausable
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: mintable
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         200:
           description: Encoded JSON String
@@ -647,29 +647,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_burn:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_burn:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:BURN
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:BURN
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: quantity
-        in: query
-        required: true
-        schema:
-          type: string
-        description: Human readable quantity, such as "100.999"
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Human readable quantity, such as "100.999"
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -683,29 +683,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_mint:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_mint:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:MINT
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:MINT
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: quantity
-        in: query
-        required: true
-        schema:
-          type: string
-        description: Human readable quantity, such as "100.999"
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Human readable quantity, such as "100.999"
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -719,29 +719,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_send:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_send:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:SEND
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:SEND
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: quantity
-        in: query
-        required: true
-        schema:
-          type: string
-        description: Human readable quantity, such as "100.999"
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Human readable quantity, such as "100.999"
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -755,23 +755,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_pause:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_pause:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:PAUSE
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:PAUSE
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -785,23 +785,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_resume:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_resume:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:RESUME
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:RESUME
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -815,23 +815,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_newowner:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_newowner:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:NEWOWNER
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:NEWOWNER
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -845,23 +845,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_freeze:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_freeze:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:FREEZE
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:FREEZE
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -875,23 +875,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp1_unfreeze:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp1_unfreeze:
     get:
       tags:
-      - VendorField QSLP1
-      summary: Generate VendorField JSON String for QSLP1:UNFREEZE
+        - VendorField ASLP1
+      summary: Generate VendorField JSON String for ASLP1:UNFREEZE
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -905,38 +905,38 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp2_genesis:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_genesis:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:GENESIS
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:GENESIS
       parameters:
-      - name: symbol
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: name
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: uri
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: pausable
-        in: query
-        required: false
-        schema:
-          type: boolean
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: uri
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: pausable
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         200:
           description: Encoded JSON String
@@ -950,23 +950,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'                
-  /vendor_qslp2_pause:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_pause:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:PAUSE
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:PAUSE
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -980,23 +980,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp2_resume:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_resume:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:RESUME
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:RESUME
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -1010,23 +1010,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp2_newowner:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_newowner:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:NEWOWNER
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:NEWOWNER
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -1040,23 +1040,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp2_authmeta:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_authmeta:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:AUTHMETA
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:AUTHMETA
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -1070,23 +1070,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp2_revokemeta:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_revokemeta:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:REVOKEMETA
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:REVOKEMETA
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -1100,23 +1100,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp2_clone:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_clone:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:CLONE
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:CLONE
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: notes
-        in: query
-        required: false
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: notes
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -1130,33 +1130,33 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp2_addmeta:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_addmeta:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:ADDMETA
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:ADDMETA
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: chunk
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: name
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: data
-        in: query
-        required: true
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: chunk
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: data
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -1170,23 +1170,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /vendor_qslp2_voidmeta:
+                $ref: "#/components/schemas/Error"
+  /vendor_aslp2_voidmeta:
     get:
       tags:
-      - VendorField QSLP2
-      summary: Generate VendorField JSON String for QSLP2:VOIDMETA
+        - VendorField ASLP2
+      summary: Generate VendorField JSON String for ASLP2:VOIDMETA
       parameters:
-      - name: tokenid
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: txid
-        in: query
-        required: true
-        schema:
-          type: string
+        - name: tokenid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: txid
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Encoded JSON String
@@ -1200,7 +1200,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     Status:
@@ -1211,7 +1211,7 @@ components:
           description: Blocks Downloaded
         ScannedBlocks:
           type: integer
-          description: Blocks Scanned into QSLP
+          description: Blocks Scanned into ASLP
     Token:
       type: object
       properties:
@@ -1220,7 +1220,7 @@ components:
           description: Schema Version
         type:
           type: string
-          description: QSLP1 or QSLP2
+          description: ASLP1 or ASLP2
         paused:
           type: boolean
           description: token paused for activity
@@ -1231,13 +1231,13 @@ components:
               type: integer
             ownerAddress:
               type: string
-              description: Qredit address of token contract controller
+              description: Ark address of token contract controller
             tokenIdHex:
               type: string
               description: Token ID Code
             versionType:
               type: integer
-              description: QSLP version (1 or 2)
+              description: ASLP version (1 or 2)
             genesis_timestamp:
               type: string
               format: date-time
@@ -1302,9 +1302,9 @@ components:
             qty_token_circulating_supply:
               type: string
               description: String formatted number of total tokens in circulation in raw form (no decimals)
-            qty_xqr_spent:
+            qty_ark_spent:
               type: string
-              description: String formatted number of total XQR spend for all transactions in raw form (no decimals)
+              description: String formatted number of total ARK spend for all transactions in raw form (no decimals)
         lastUpdatedBlock:
           type: integer
           description: Last block height a transaction has occurred for this token
@@ -1316,7 +1316,7 @@ components:
           description: Schema Version
         type:
           type: string
-          description: QSLP2
+          description: ASLP2
         paused:
           type: boolean
           description: token paused for activity
@@ -1327,13 +1327,13 @@ components:
               type: integer
             ownerAddress:
               type: string
-              description: Qredit address of token contract controller
+              description: Ark address of token contract controller
             tokenIdHex:
               type: string
               description: Token ID Code
             versionType:
               type: integer
-              description: QSLP version (1 or 2)
+              description: ASLP version (1 or 2)
             genesis_timestamp:
               type: string
               format: date-time
@@ -1398,41 +1398,41 @@ components:
             qty_token_circulating_supply:
               type: string
               description: String formatted number of total tokens in circulation in raw form (no decimals)
-            qty_xqr_spent:
+            qty_ark_spent:
               type: string
-              description: String formatted number of total XQR spend for all transactions in raw form (no decimals)
+              description: String formatted number of total ARK spend for all transactions in raw form (no decimals)
         lastUpdatedBlock:
           type: integer
           description: Last block height a transaction has occurred for this token
         metadata:
           type: array
-          items: 
+          items:
             type: object
             properties:
               schema:
-                $ref: '#/components/schemas/MetaData'
-    AddressQSLP1:
+                $ref: "#/components/schemas/MetaData"
+    AddressASLP1:
       type: object
       properties:
         schema_version:
           type: integer
           description: Schema Version
-        recordId: 
+        recordId:
           type: string
           description: Unique record id for address/tokenid
-        address: 
+        address:
           type: string
-          description: Qredit address
-        tokenIdHex: 
+          description: Ark address
+        tokenIdHex:
           type: string
           description: Token ID
-        isOwner: 
+        isOwner:
           type: boolean
           description: Is token owner
-        tokenBalance: 
+        tokenBalance:
           type: string
           description: Number string of current balance in raw form (no decimals)
-        tokenDecimals: 
+        tokenDecimals:
           type: integer
           description: Number of decimals the token has
         lastUpdatedBlock:
@@ -1441,25 +1441,25 @@ components:
         isActive:
           type: boolean
           description: Is active for sending
-    AddressQSLP2:
+    AddressASLP2:
       type: object
       properties:
         schema_version:
           type: integer
           description: Schema Version
-        recordId: 
+        recordId:
           type: string
           description: Unique record id for address/tokenid
-        address: 
+        address:
           type: string
-          description: Qredit address
-        tokenIdHex: 
+          description: Ark address
+        tokenIdHex:
           type: string
           description: Token ID
-        isOwner: 
+        isOwner:
           type: boolean
           description: Is token owner
-        isMetaAuth: 
+        isMetaAuth:
           type: boolean
           description: Can address add metadata to token
         lastUpdatedBlock:
@@ -1468,160 +1468,160 @@ components:
         isActive:
           type: boolean
           description: Is active for sending
-    TransactionQSLP1:
+    TransactionASLP1:
       type: object
       properties:
-        schema_version: 
+        schema_version:
           type: integer
-        txid: 
+        txid:
           type: string
-        blockId: 
+        blockId:
           type: string
-        blockHeight: 
+        blockHeight:
           type: integer
-        valid: 
+        valid:
           type: boolean
-        invalidReason: 
+        invalidReason:
           type: string
-        transactionDetails: 
+        transactionDetails:
           type: object
           properties:
             schema:
-              $ref: '#/components/schemas/TransactionDetailsQSLP1'
-    TransactionDetailsQSLP1:
+              $ref: "#/components/schemas/TransactionDetailsASLP1"
+    TransactionDetailsASLP1:
       type: object
       properties:
-        schema_version: 
+        schema_version:
           type: integer
-        transactionType: 
+        transactionType:
           type: string
-        senderAddress: 
+        senderAddress:
           type: string
-        tokenIdHex: 
+        tokenIdHex:
           type: string
-        versionType: 
+        versionType:
           type: integer
-        timestamp: 
+        timestamp:
           type: string
           format: date-time
-        timestamp_unix: 
+        timestamp_unix:
           type: integer
-        symbol: 
+        symbol:
           type: string
-        name: 
+        name:
           type: string
-        documentUri: 
+        documentUri:
           type: string
-        decimals: 
+        decimals:
           type: integer
-        genesisOrMintQuantity: 
+        genesisOrMintQuantity:
           type: string
-        sendOutput: 
+        sendOutput:
           type: object
           properties:
             schema:
-              $ref: '#/components/schemas/TransactionOutputQSLP1'
-        note: 
+              $ref: "#/components/schemas/TransactionOutputASLP1"
+        note:
           type: string
-        amount_xqr: 
+        amount_ark:
           type: string
-        fee_xqr: 
+        fee_ark:
           type: string
-    TransactionOutputQSLP1:
+    TransactionOutputASLP1:
       type: object
       properties:
-        schema_version: 
+        schema_version:
           type: integer
-        address: 
+        address:
           type: string
         amount:
           type: string
-    TransactionQSLP2:
+    TransactionASLP2:
       type: object
       properties:
-        schema_version: 
+        schema_version:
           type: integer
-        txid: 
+        txid:
           type: string
-        blockId: 
+        blockId:
           type: string
-        blockHeight: 
+        blockHeight:
           type: integer
-        valid: 
+        valid:
           type: boolean
-        invalidReason: 
+        invalidReason:
           type: string
-        transactionDetails: 
+        transactionDetails:
           type: object
           properties:
             schema:
-              $ref: '#/components/schemas/TransactionDetailsQSLP2'
-    TransactionDetailsQSLP2:
+              $ref: "#/components/schemas/TransactionDetailsASLP2"
+    TransactionDetailsASLP2:
       type: object
       properties:
-        schema_version: 
+        schema_version:
           type: integer
-        transactionType: 
+        transactionType:
           type: string
-        senderAddress: 
+        senderAddress:
           type: string
-        tokenIdHex: 
+        tokenIdHex:
           type: string
-        versionType: 
+        versionType:
           type: integer
-        timestamp: 
+        timestamp:
           type: string
           format: date-time
-        timestamp_unix: 
+        timestamp_unix:
           type: integer
-        symbol: 
+        symbol:
           type: string
-        name: 
+        name:
           type: string
-        documentUri: 
+        documentUri:
           type: string
-        note: 
+        note:
           type: string
-        amount_xqr: 
+        amount_ark:
           type: string
-        fee_xqr: 
+        fee_ark:
           type: string
     MetaData:
       type: object
       properties:
-        schema_version: 
+        schema_version:
           type: integer
-        txid: 
+        txid:
           type: string
-        blockId: 
+        blockId:
           type: string
-        blockHeight: 
+        blockHeight:
           type: integer
-        metaDetails: 
+        metaDetails:
           type: object
           properties:
             schema:
-              $ref: '#/components/schemas/MetaDetails'
+              $ref: "#/components/schemas/MetaDetails"
         void:
           type: boolean
     MetaDetails:
       type: object
       properties:
-        schema_version: 
+        schema_version:
           type: integer
-        posterAddress: 
+        posterAddress:
           type: string
-        tokenIdHex: 
+        tokenIdHex:
           type: string
-        timestamp: 
+        timestamp:
           type: string
-        timestamp_unix: 
+        timestamp_unix:
           type: integer
-        metaName: 
+        metaName:
           type: string
-        metaChunk: 
+        metaChunk:
           type: integer
-        metaData: 
+        metaData:
           type: string
     Error:
       type: object
@@ -1635,13 +1635,13 @@ components:
             message:
               type: string
               enum:
-              - Internal Server Error
-              - Gateway Timeout
-              - Service Unavailable
-              - Symbol not found
-              - Authorisation required
-              - Authorisation failed
-              - Validation error
-              - Insufficient funds
+                - Internal Server Error
+                - Gateway Timeout
+                - Service Unavailable
+                - Symbol not found
+                - Authorisation required
+                - Authorisation failed
+                - Validation error
+                - Insufficient funds
             description:
               type: string
