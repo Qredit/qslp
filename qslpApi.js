@@ -34,11 +34,11 @@ var iniconfig = ini.parse(fs.readFileSync('qslp.ini', 'utf-8'))
 // Mongo Connection Details
 const mongoconnecturl = iniconfig.mongo_connection_string;
 const mongodatabase = iniconfig.mongo_database;
-const qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
+
 
 // MongoDB Library and Connection
 const qslpDB = require("./lib/qslpDB");
-
+const qdbapi = new qslpDB.default(mongoconnecturl, mongodatabase);
 // Mongo Connect
 
 connectDb();
@@ -51,28 +51,28 @@ function connectDb() {
 		qdbapi.setClient(mclient);
 
 	})();
-	
+
 }
 
 // Mongo Keep Alive
 
-setInterval(function() {
+setInterval(function () {
 
 	(async () => {
-	
+
 		try {
 
 			var ping = await qdbapi.ping();
-	
+
 		} catch (e) {
-	
+
 			console.log('Error Pinging Mongo... Reconnecting.');
 
 			mclient = await qdbapi.connect();
 			qdbapi.setClient(mclient);
 
 		}
-	
+
 	})();
 
 }, 30000);
