@@ -265,7 +265,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /addresses/{address}:
+  /address/{address}:
     get:
       tags:
       - QSLP1/QSLP2
