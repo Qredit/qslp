@@ -11,7 +11,7 @@ redis_host = '127.0.0.1'
 api_port = 8001
 
 seed_node = 'https://explorer.ark.io/api'
-api_node = 'http://127.0.0.1:5103/api/v2'
+api_node = 'http://127.0.0.1:4003/api/v2'
 webhook_node = 'http://127.0.0.1:5104/api'
 aslp_webhook = 'http://127.0.0.1/api/newblocknotify'
 qae_webhook = 'http://127.0.0.1/api/newblocknotify'
