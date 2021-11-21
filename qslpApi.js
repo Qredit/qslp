@@ -323,6 +323,15 @@ router.route('/address/:addr')
 		(async () => {
 
 			message = await qdbapi.findDocuments('addresses', { "address": addr });
+			
+			for (let i = 0; i < message.length; i++)
+			{
+				var tokenId = message[i].tokenIdHex;
+				
+				var tokenData = await qdbapi.findDocument('tokens', { 'tokenDetails.tokenIdHex': tokenId });
+				
+				message[i].tokenInfo = tokenData;
+			}
 
 			res.json(message);
 
