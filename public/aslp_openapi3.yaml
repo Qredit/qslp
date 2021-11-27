@@ -4,26 +4,16 @@ info:
   description: |
     API Documentation for the ASLP v1 & v2 API
     <h4>API Endpoint URL</h4>
-    The endpoint for our REST API is:  <code>https://aslp.qredit.cloud/api</code>
+    The endpoint for our REST API is:  <code>https://aslp.qredit.dev/api</code>
+    <br /><br />
+        <h4>Master Address</h4>
+    The Master Address for ASLP transactions is:  <code>ARKQXzHvEWXgfCgAcJWJQKUMus5uE6Yckr</code>
     <br /><br />
     <h4>Datetime Formatting</h4>
     Unless otherwise stated, all timestamps are returned in ISO8601 format in UTC. Example: "2018-04-01T00:00:00Z" or "2018-04-01T00:00:00.000Z".   If a timestamp is returned as an Integer, then that is a Unix timestamp.
     <br /><br />
     <h4>Number Formatting</h4>
     All finance data such as price, quantity, and fee should be arbitrary precision numbers and string representation. Example: "5.39300000"
-    <br /><br />
-    <h4>Helpful Classes</h4>
-    We have Python, PHP, and NodeJS classes available on our GitHub:  <a href="https://github.com/qredit/" target=new><strong><u>https://github.com/qredit/</u></strong></a>
-    <br /><br />
-    <h4>HTTP Status Codes</h4>
-    <code>200</code> OK Successful request<br />
-    <code>400</code> Bad Request. Returns JSON with the error message<br />
-    <code>401</code> Unauthorized. Authorization required or failed<br />
-    <code>403</code> Forbidden. Action is forbidden for API key<br />
-    <code>429</code> Too Many Requests. Your connection is being rate limited<br />
-    <code>500</code> Internal Server. Internal Server Error<br />
-    <code>503</code> Service Unavailable. Service is down for maintenance<br />
-    <code>504</code> Gateway Timeout. Request timeout expired
     <br /><br />
     <h4>Error Codes</h4>
     <table class="table table-striped">
@@ -83,7 +73,7 @@ info:
     </table>
   version: 1.0.2
 servers:
-  - url: https://aslp.qredit.cloud/api
+  - url: https://aslp.qredit.dev/api
 paths:
   /status:
     get:
@@ -589,8 +579,8 @@ paths:
   /vendor_aslp1_genesis:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:GENESIS
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:GENESIS
       parameters:
         - name: decimals
           in: query
@@ -651,8 +641,8 @@ paths:
   /vendor_aslp1_burn:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:BURN
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:BURN
       parameters:
         - name: tokenid
           in: query
@@ -687,8 +677,8 @@ paths:
   /vendor_aslp1_mint:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:MINT
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:MINT
       parameters:
         - name: tokenid
           in: query
@@ -723,8 +713,8 @@ paths:
   /vendor_aslp1_send:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:SEND
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:SEND
       parameters:
         - name: tokenid
           in: query
@@ -759,8 +749,8 @@ paths:
   /vendor_aslp1_pause:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:PAUSE
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:PAUSE
       parameters:
         - name: tokenid
           in: query
@@ -789,8 +779,8 @@ paths:
   /vendor_aslp1_resume:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:RESUME
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:RESUME
       parameters:
         - name: tokenid
           in: query
@@ -819,8 +809,8 @@ paths:
   /vendor_aslp1_newowner:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:NEWOWNER
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:NEWOWNER
       parameters:
         - name: tokenid
           in: query
@@ -849,8 +839,8 @@ paths:
   /vendor_aslp1_freeze:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:FREEZE
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:FREEZE
       parameters:
         - name: tokenid
           in: query
@@ -879,8 +869,8 @@ paths:
   /vendor_aslp1_unfreeze:
     get:
       tags:
-        - VendorField ASLP1
-      summary: Generate VendorField JSON String for ASLP1:UNFREEZE
+        - Smartbridge ASLP1 (Fungible) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP1:UNFREEZE
       parameters:
         - name: tokenid
           in: query
@@ -909,8 +899,8 @@ paths:
   /vendor_aslp2_genesis:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:GENESIS
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:GENESIS (copy the output and send with 1 ARK to the Master Address)
       parameters:
         - name: symbol
           in: query
@@ -954,8 +944,8 @@ paths:
   /vendor_aslp2_pause:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:PAUSE
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:PAUSE (copy the output and send with 0.00000001 ARK to the Master Address)
       parameters:
         - name: tokenid
           in: query
@@ -984,8 +974,8 @@ paths:
   /vendor_aslp2_resume:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:RESUME
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:RESUME (copy the output and send with 0.00000001 ARK to the Master Address)
       parameters:
         - name: tokenid
           in: query
@@ -1014,8 +1004,8 @@ paths:
   /vendor_aslp2_newowner:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:NEWOWNER
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:NEWOWNER (copy the output and send with 0.00000001 ARK to the new owner)
       parameters:
         - name: tokenid
           in: query
@@ -1044,8 +1034,8 @@ paths:
   /vendor_aslp2_authmeta:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:AUTHMETA
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:AUTHMETA (copy the output and send with 0.00000001 ARK to the Master Address)
       parameters:
         - name: tokenid
           in: query
@@ -1074,8 +1064,8 @@ paths:
   /vendor_aslp2_revokemeta:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:REVOKEMETA
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:REVOKEMETA (copy the output and send with 0.00000001 ARK to the Master Address)
       parameters:
         - name: tokenid
           in: query
@@ -1104,8 +1094,8 @@ paths:
   /vendor_aslp2_clone:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:CLONE
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:CLONE (copy the output and send with 0.00000001 ARK to the Master Address)
       parameters:
         - name: tokenid
           in: query
@@ -1134,8 +1124,8 @@ paths:
   /vendor_aslp2_addmeta:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:ADDMETA
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:ADDMETA (copy the output and send with 0.00000001 ARK to the Master Address)
       parameters:
         - name: tokenid
           in: query
@@ -1174,8 +1164,8 @@ paths:
   /vendor_aslp2_voidmeta:
     get:
       tags:
-        - VendorField ASLP2
-      summary: Generate VendorField JSON String for ASLP2:VOIDMETA
+        - Smartbridge ASLP2 (NFT) (Generator)
+      summary: Generate Smartbridge JSON String for ASLP2:VOIDMETA (copy the output and send with 0.00000001 ARK to the Master Address)
       parameters:
         - name: tokenid
           in: query
