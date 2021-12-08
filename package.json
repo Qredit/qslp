@@ -28,7 +28,7 @@
     "pg": "^7.17.0",
     "public-ip": "^3.2.0",
     "arkjs": "git+https://github.com/Qredit/qredit-js.git#ark",
-    "redis": "^2.8.0",
+    "redis": "^4.0.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "spark-md5": "^3.0.0",
