@@ -353,8 +353,6 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				var findLastJournal = await qdb.findDocumentsWithId('journal', {}, 1, { "_id": -1 }, 0);
 
 				var lastJournalEntry = findLastJournal[0];
-
-console.log(lastJournalEntry);
 				
 				if (!lastJournalEntry) {
 					// Something Broke.  Start over....
@@ -372,6 +370,9 @@ console.log(lastJournalEntry);
 					var lastJournalBlockId = lastJournalEntry['blockId'];
 					var lastJournalBlockHeight = lastJournalEntry['blockHeight'];
 
+					await setAsync('ASLP_lastscanblock', lastJournalBlockHeight);
+					await setAsync('ASLP_lastblockid', lastJournalBlockId);
+					
 					console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
 
 					// Update Counters to new top Journal
@@ -427,13 +428,15 @@ console.log(lastJournalEntry);
 					}
 
 					console.log('Journal Rebuild Completed..');
-
+	
 				}
 
 			} catch (e) {
 
 				console.log('Error During Rollback - FATAL');
 				console.log(e);
+				console.log("Last Journal Entry:");
+				console.log(lastJournalEntry);
 
 				rclient.del('ASLP_lastblockid', function (err, reply) {
 					rclient.del('ASLP_lastscanblock', function (err, reply) {
@@ -442,12 +445,6 @@ console.log(lastJournalEntry);
 				});
 
 			}
-
-console.log("lastJournalBlockHeight:" + lastJournalBlockHeight);
-console.log("lastJournalBlockId:" + lastJournalBlockId);
-
-			await setAsync('ASLP_lastscanblock', lastJournalBlockHeight);
-			await setAsync('ASLP_lastblockid', lastJournalBlockId);
 
 			var endTime = (new Date()).getTime();
 
