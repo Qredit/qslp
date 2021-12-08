@@ -23,7 +23,6 @@ const crypto = require('crypto');			 // for creating hashes of things
 const SparkMD5 = require('spark-md5');  		 // Faster than crypto for md5
 const request = require('request');			 // Library for making http requests
 const publicIp = require('public-ip');		 // a helper to find out what our external IP is.	Needed for generating proper ring signatures
-const { promisify } = require('util');			 // Promise functions
 const asyncv3 = require('async');			 // Async Helper
 const { Client } = require('pg');				 // Postgres
 const arkjs = require("arkjs");
@@ -79,12 +78,6 @@ setInterval(function () {
 
 // Connect to Redis and setup some async call definitions
 const rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
-const hgetAsync = promisify(rclient.hget).bind(rclient);
-const hsetAsync = promisify(rclient.hset).bind(rclient);
-const getAsync = promisify(rclient.get).bind(rclient);
-const setAsync = promisify(rclient.set).bind(rclient);
-const delAsync = promisify(rclient.del).bind(rclient);
-
 
 // Declaring some variable defaults
 var myIPAddress = '';
@@ -113,6 +106,8 @@ rclient.on('error', function () {
 	console.log("Error in Redis");
 	error_handle("Error in Redis", 'redisConnection');
 });
+
+rclient.connect();
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -164,7 +159,7 @@ router.route('/status')
 			var dlblocks = await pgclient.query('SELECT * FROM blocks ORDER BY height DESC LIMIT 1')
 			await pgclient.end()
 
-			var scanned = await getAsync('aslp_lastscanblock');
+			var scanned = await rclient.get('aslp_lastscanblock');
 
 			if (dlblocks && dlblocks.rows) {
 				var downloadedblocks = dlblocks.rows[0].height;
@@ -727,23 +722,24 @@ router.route('/peerInfo')
 router.route('/getHeight')
 	.get(function (req, res) {
 
-		updateaccessstats(req);
+		(async () => {
+			
+			updateaccessstats(req);
 
-		rclient.get('aslp_lastscanblock', function (err, reply) {
+			var reply = await rclient.get('aslp_lastscanblock');
 
-			if (err) {
-				console.log(err);
-				var message = { error: 'Height not available' };
-			}
-			else if (reply == null || parseInt(reply) != reply) {
+			if (reply == null || parseInt(reply) != reply) {
 
 				var message = { height: parseInt(reply) };
 
 			}
+			else {
+				var message = { error: 'Height not available' };
+			}
 
 			res.json(message);
-
-		});
+			
+		})();
 
 	});
 
@@ -1872,11 +1868,15 @@ function initialize() {
 
 function newblocknotify() {
 
-	console.log('New Block Notify Received..');
+	(async () => {
+		
+		console.log('New Block Notify Received..');
 
-	rclient.rpush('blockNotify', 'new');
+		await rclient.rpush('blockNotify', 'new');
 
-	return true;
+		return true;
+		
+	})();
 
 }
 
