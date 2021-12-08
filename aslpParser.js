@@ -63,8 +63,8 @@ const aslp = new ASLPSchema.default();
 
 // Declaring some variable defaults
 
-var ASLPactivationHeight = 17891337;
-var ASLPactivationBlockId = '59a86d78b369c3cbc914101d4f940ad2004d6b1c4e716dc9e67004311b3a07a3';
+const ASLPactivationHeight = 17891337;
+const ASLPactivationBlockId = '59a86d78b369c3cbc914101d4f940ad2004d6b1c4e716dc9e67004311b3a07a3';
 
 var scanBlockId = 0;
 var lastBlockId = '';
@@ -115,8 +115,8 @@ function dorun()
 			console.log("Forcing a Rescan....");
 			console.log("--------------------");
 			
-			await rclient.set('ASLP_lastscanblock', ASLPactivationHeight);
-			await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
+			await rclient.set('ASLP_lastscanblock', 17891337);
+			await rclient.set('ASLP_lastblockid', '59a86d78b369c3cbc914101d4f940ad2004d6b1c4e716dc9e67004311b3a07a3');
 
 			// Remove items from MongoDB
 
