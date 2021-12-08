@@ -454,6 +454,8 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 			var elapsedTime = (endTime - startTime) / 1000;
 
 			console.log('Rollback completed in ' + elapsedTime + ' seconds');
+			
+			resolve(true);
 
 		})();
 
