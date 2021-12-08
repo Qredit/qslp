@@ -525,21 +525,23 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 			function test(cb) { cb(null, count < max) },
 			function iter(callback) {
 
-				if (shuttingdown == true) {
+				(async () => {
+					
+					if (shuttingdown == true) {
 
-					safetoshutdown = true;
+						safetoshutdown = true;
 
-				}
-				else {
+					}
+					else {
 
-					count++;
+						count++;
 
-					scanLockTimer = Math.floor(new Date() / 1000);
+						scanLockTimer = Math.floor(new Date() / 1000);
 
-					if (count % 1000 == 0 || count == max) console.log("Next scan from Height: #" + count);
+						if (count % 1000 == 0 || count == max) console.log("Next scan from Height: #" + count);
 
-					pgclient.query('SELECT id, number_of_transactions, height, previous_block FROM blocks WHERE height = $1 LIMIT 1', [count], (err, message) => {
-
+						var message = await pgclient.query('SELECT id, number_of_transactions, height, previous_block FROM blocks WHERE height = $1 LIMIT 1', [count]);
+					
 						if (message && message.rows) {
 
 							var blockdata = message.rows[0];
@@ -556,37 +558,35 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 									// New code attempts a rollback
 
-									(async () => {
 
-										var rollbackHeight = thisblockheight - 5;
-										if (rollbackHeight < 0) {
+									var rollbackHeight = thisblockheight - 5;
+									if (rollbackHeight < 0) {
 
-											console.log('Error:	 Last Block ID is incorrect!  Rescan Required!');
+										console.log('Error:	 Last Block ID is incorrect!  Rescan Required!');
 
-											console.log("Expected: " + previousblockid);
-											console.log("Received: " + lastBlockId);
-											console.log("ThisBlockHeight: " + thisblockheight);
-											console.log("LastScanBlock: " + count);
+										console.log("Expected: " + previousblockid);
+										console.log("Received: " + lastBlockId);
+										console.log("ThisBlockHeight: " + thisblockheight);
+										console.log("LastScanBlock: " + count);
 
-											await rclient.del('ASLP_lastblockid');
-											await rclient.del('ASLP_lastscanblock');
+										await rclient.del('ASLP_lastblockid');
+										await rclient.del('ASLP_lastscanblock');
 											
-											await rclient.set('ASLP_ignorerunparameters', '1');
-											process.exit(-1);
+										await rclient.set('ASLP_ignorerunparameters', '1');
+										process.exit(-1);
 
-										}
-										else {
+									}
+									else {
 
-											console.log('Error:	 Last Block ID is incorrect!  Attempting to rollback 5 blocks!');
+										console.log('Error:	 Last Block ID is incorrect!  Attempting to rollback 5 blocks!');
 
-											await rebuildDbFromJournal(rollbackHeight, qdb);
+										await rebuildDbFromJournal(rollbackHeight, qdb);
 
-											await rclient.set('ASLP_ignorerunparameters', '1');
-											process.exit(-1);
+										await rclient.set('ASLP_ignorerunparameters', '1');
+										process.exit(-1);
 
-										}
-
-									})();
+									}
+						
 
 								}
 								else {
@@ -597,140 +597,135 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 									if (parseInt(blocktranscount) > 0 && thisblockheight >= ASLPactivationHeight) {
 
-										pgclient.query('SELECT * FROM transactions WHERE block_id = $1 ORDER BY sequence ASC', [blockidcode], (err, tresponse) => {
+										var response = await pgclient.query('SELECT * FROM transactions WHERE block_id = $1 ORDER BY sequence ASC', [blockidcode]);
 
-											if (tresponse && tresponse.rows) {
+										if (tresponse && tresponse.rows) {
 
-												(async () => {
+											for (let ti = 0; ti < tresponse.rows.length; ti++) {
 
-													for (let ti = 0; ti < tresponse.rows.length; ti++) {
+												var origtxdata = tresponse.rows[ti];
 
-														var origtxdata = tresponse.rows[ti];
+												var epochdate = new Date(Date.parse('2017-03-21 13:00:00'));
+												var unixepochtime = Math.round(epochdate.getTime() / 1000);
 
-														var epochdate = new Date(Date.parse('2017-03-21 13:00:00'));
-														var unixepochtime = Math.round(epochdate.getTime() / 1000);
+												var unixtimestamp = parseInt(origtxdata.timestamp) + unixepochtime;
+												var humantimestamp = new Date(unixtimestamp * 1000).toISOString();
 
-														var unixtimestamp = parseInt(origtxdata.timestamp) + unixepochtime;
-														var humantimestamp = new Date(unixtimestamp * 1000).toISOString();
+												var txdata = {};
+												txdata.id = origtxdata.id
+												txdata.blockId = origtxdata.block_id;
+												txdata.version = origtxdata.version;
+												txdata.type = origtxdata.type;
+												txdata.amount = origtxdata.amount;
+												txdata.fee = origtxdata.fee;
+												//txdata.sender = arkjs.crypto.getAddress(origtxdata.sender_public_key);
+												txdata.sender = ArkIdentities.Address.fromPublicKey(origtxdata.sender_public_key);
+												txdata.senderPublicKey = origtxdata.sender_public_key;
+												txdata.recipient = origtxdata.recipient_id
+												if (origtxdata.vendor_field != null && origtxdata.vendor_field != '') {
+													try {
+														txdata.vendorField = origtxdata.vendor_field.toString(); //hex_to_ascii(origtxdata.vendor_field);
+													}
+													catch (e) {
+														txdata.vendorField = null;
+													}
+												}
+												else {
+													txdata.vendorField = null;
+												}
+												txdata.confirmations = parseInt(max) - parseInt(thisblockheight);
+												txdata.timestamp = { epoch: origtxdata.timestamp, unix: unixtimestamp, human: humantimestamp };
 
-														var txdata = {};
-														txdata.id = origtxdata.id
-														txdata.blockId = origtxdata.block_id;
-														txdata.version = origtxdata.version;
-														txdata.type = origtxdata.type;
-														txdata.amount = origtxdata.amount;
-														txdata.fee = origtxdata.fee;
-														//txdata.sender = arkjs.crypto.getAddress(origtxdata.sender_public_key);
-														txdata.sender = ArkIdentities.Address.fromPublicKey(origtxdata.sender_public_key);
-														txdata.senderPublicKey = origtxdata.sender_public_key;
-														txdata.recipient = origtxdata.recipient_id
-														if (origtxdata.vendor_field != null && origtxdata.vendor_field != '') {
-															try {
-																txdata.vendorField = origtxdata.vendor_field.toString(); //hex_to_ascii(origtxdata.vendor_field);
-															}
-															catch (e) {
-																txdata.vendorField = null;
-															}
-														}
-														else {
-															txdata.vendorField = null;
-														}
-														txdata.confirmations = parseInt(max) - parseInt(thisblockheight);
-														txdata.timestamp = { epoch: origtxdata.timestamp, unix: unixtimestamp, human: humantimestamp };
+												if (txdata.vendorField && txdata.vendorField != '') {
 
-														if (txdata.vendorField && txdata.vendorField != '') {
+													var isjson = false;
 
-															var isjson = false;
+													try {
+														JSON.parse(txdata.vendorField);
+														isjson = true;
+													} catch (e) {
+														//console.log("VendorField is not JSON");
+													}
 
-															try {
-																JSON.parse(txdata.vendorField);
-																isjson = true;
-															} catch (e) {
-																//console.log("VendorField is not JSON");
-															}
+													if (isjson === true) {
 
-															if (isjson === true) {
+														var parsejson = JSON.parse(txdata.vendorField);
 
-																var parsejson = JSON.parse(txdata.vendorField);
+														if (parsejson.aslp1) {
 
-																if (parsejson.aslp1) {
+															console.log(txdata);
 
-																	console.log(txdata);
-
-																	var txmessage = await qdb.findDocuments('transactions', { "txid": txdata.id });
-																	if (txmessage.length == 0) {
-																		try {
-																			var ASLPresult = await aslp.parseTransaction(txdata, blockdata, qdb);
-																		} catch (e) {
-																			error_handle(e, 'parseTransaction', 'error');
-																		}
-																		processedItems = true;
-																	}
-																	else {
-																		console.log('ERROR:	 We already have TXID: ' + txdata.id);
-																	}
-
+															var txmessage = await qdb.findDocuments('transactions', { "txid": txdata.id });
+															if (txmessage.length == 0) {
+																try {
+																	var ASLPresult = await aslp.parseTransaction(txdata, blockdata, qdb);
+																} catch (e) {
+																	error_handle(e, 'parseTransaction', 'error');
 																}
-																else if (parsejson.aslp2) {
-
-																	console.log(txdata);
-
-																	var txmessage = await qdb.findDocuments('metadata', { "txid": txdata.id });
-																	if (txmessage.length == 0) {
-																		try {
-																			var ASLPresult = await aslp.parseTransaction(txdata, blockdata, qdb);
-																		} catch (e) {
-																			error_handle(e, 'parseTransaction', 'error');
-																		}
-																		processedItems = true;
-																	}
-																	else {
-																		console.log('ERROR:	 We already have TXID: ' + txdata.id);
-																	}
-
-																}
-
+																processedItems = true;
+															}
+															else {
+																console.log('ERROR:	 We already have TXID: ' + txdata.id);
 															}
 
 														}
+														else if (parsejson.aslp2) {
 
+															console.log(txdata);
 
+															var txmessage = await qdb.findDocuments('metadata', { "txid": txdata.id });
+															if (txmessage.length == 0) {
+																try {
+																	var ASLPresult = await aslp.parseTransaction(txdata, blockdata, qdb);
+																} catch (e) {
+																	error_handle(e, 'parseTransaction', 'error');
+																}
+																processedItems = true;
+															}
+															else {
+																console.log('ERROR:	 We already have TXID: ' + txdata.id);
+															}
+
+														}
 
 													}
 
-													// No longer use
+												}
 
-													await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
-													await rclient.set('ASLP_lastblockid', blockidcode);
 
-													callback(null, count);
-
-												})();
 
 											}
-											else {
-												// This needs to be handled.  TODO:	 Missing transactions when there should be some
-												callback(null, count);
-											}
 
-										});
-
-									}
-									else {
-										(async () => {
-
-											// No longer use
+												// No longer use
 
 											await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
 											await rclient.set('ASLP_lastblockid', blockidcode);
 
-											try {
-												callback(null, count);
-											} catch (e) {
-												console.log(e);
-											}
+											callback(null, count);
+;
 
-										})();
+										}
+										else {
+											// This needs to be handled.  TODO:	 Missing transactions when there should be some
+											callback(null, count);
+										}
+
+								
+
+									}
+									else {
+
+										// No longer use
+
+										await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
+										await rclient.set('ASLP_lastblockid', blockidcode);
+
+										try {
+											callback(null, count);
+										} catch (e) {
+											console.log(e);
+										}
+
 
 									}
 
@@ -752,11 +747,10 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 						}
 
-					});
+					}
 
-
-				}
-
+				})();
+				
 			},
 			function (err, n) {
 
