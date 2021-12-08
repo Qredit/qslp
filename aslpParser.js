@@ -417,17 +417,19 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 								process.exit(-1);
 							}
 							
-							var lastJournalBlockId = journalItem['blockId'];
-							var lastJournalBlockHeight = journalItem['blockHeight'];
-
-							await rclient.set('ASLP_lastscanblock', Big(lastJournalBlockHeight).toFixed(0));
-							await rclient.set('ASLP_lastblockid', lastJournalBlockId);
+							lastJournalID = journalItem['_id'];
+							lastJournalBlockId = journalItem['blockId'];
+							lastJournalBlockHeight = journalItem['blockHeight'];
 						
 						}
 						
 						if (getJournals.length < jLimit) jContinue = 0;
 
 					}
+
+					await rclient.set('ASLP_lastscanblock', Big(lastJournalBlockHeight).toFixed(0));
+					await rclient.set('ASLP_lastblockid', lastJournalBlockId);
+					await qdb.updateDocument('counters', { "collection": "journal", "field": "id" }, { "current": lastJournalID });
 
 					console.log('Journal Rebuild Completed..');
 	
