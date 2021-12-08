@@ -95,128 +95,135 @@ rclient.on('error', function () {
 	error_handle("Error in Redis", 'redisConnection');
 });
 
-(async () => {
+dorun();
+
+function dorun()
+{
 	
-	await rclient.connect();
-	await rclienttwo.connect();
+	(async () => {
 	
-	var lbreply = await rclient.get('ASLP_lastscanblock');
+		await rclient.connect();
+		await rclienttwo.connect();
 	
-	var ignorerunparams = await rclient.get('ASLP_ignorerunparameters');
-
-	// Resync/Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node aslpParser.js resync)
-
-	if ((ignorerunparams == null && process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null || parseInt(lbreply) != lbreply) {
-
-		console.log("--------------------");
-		console.log("Forcing a Rescan....");
-		console.log("--------------------");
-
-		await rclient.set('ASLP_lastscanblock', ASLPactivationHeight);
-		await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
-
-		// Remove items from MongoDB
-
-		let response = {};
-		let exists = true;
-
-		var mclient = await qdb.connect();
-		qdb.setClient(mclient);
-
-		exists = await qdb.doesCollectionExist('tokens');
-		console.log("Does collection 'tokens' Exist: " + exists);
-		if (exists == true) {
-			console.log("Removing all documents from 'tokens'");
-			await qdb.removeDocuments('tokens', {});
-		}
-		else {
-			console.log("Creating new collection 'tokens'");
-			await qdb.createCollection('tokens', {});
-		}
-
-		exists = await qdb.doesCollectionExist('addresses');
-		console.log("Does collection 'addresses' Exist: " + exists);
-		if (exists == true) {
-			console.log("Removing all documents from 'addresses'");
-			await qdb.removeDocuments('addresses', {});
-		}
-		else {
-			console.log("Creating new collection 'addresses'");
-			await qdb.createCollection('addresses', {});
-		}
-
-		exists = await qdb.doesCollectionExist('transactions');
-		console.log("Does collection 'transactions' Exist: " + exists);
-		if (exists == true) {
-			console.log("Removing all documents from 'transactions'");
-			await qdb.removeDocuments('transactions', {});
-		}
-		else {
-			console.log("Creating new collection 'transactions'");
-			await qdb.createCollection('transactions', {});
-		}
-
-		exists = await qdb.doesCollectionExist('journal');
-		console.log("Does collection 'journal' Exist: " + exists);
-		if (exists == true) {
-			console.log("Removing all documents from 'journal'");
-			await qdb.removeDocuments('journal', {});
-		}
-		else {
-			console.log("Creating new collection 'journal'");
-			await qdb.createCollection('journal', {});
-		}
-
-		exists = await qdb.doesCollectionExist('metadata');
-		console.log("Does collection 'metadata' Exist: " + exists);
-		if (exists == true) {
-			console.log("Removing all documents from 'metadata'");
-			await qdb.removeDocuments('metadata', {});
-		}
-		else {
-			console.log("Creating new collection 'metadata'");
-			await qdb.createCollection('metadata', {});
-		}
-
-		exists = await qdb.doesCollectionExist('counters');
-		console.log("Does collection 'counters' Exist: " + exists);
-		if (exists == true) {
-			console.log("Removing all documents from 'counters'");
-			await qdb.removeDocuments('counters', {});
-			await qdb.insertDocument('counters', {collection: 'journal', field: 'id', current: 0});
-		}
-
-		await aslp.indexDatabase(qdb);
-
-		await qdb.close();
-
-		// Initialze things
-		initialize();
-
-	}
-	else if (ignorerunparams == null && process.argv.length == 4 && process.argv[2] == 'rollback') {
-
-		/* Roll back to specified blockheight and resume from there:   node aslpParser.js rollback 122343 */
-
-		var rollbackHeight = parseInt(process.argv[3]);
-
-		var mclient = await qdb.connect();
-		qdb.setClient(mclient);
-
-		console.log("Performing Rollback to Block Height: " + rollbackHeight);
-
-		await rebuildDbFromJournal(rollbackHeight, qdb);
-
-		initialize();
-
-	}
-	else {
-		await rclient.del('ASLP_ignorerunparameters');
-		// These aren't the droids we are looking for, move along...  
-		initialize();
-	}
+		var lbreply = await rclient.get('ASLP_lastscanblock');
 	
-})();
+		var ignorerunparams = await rclient.get('ASLP_ignorerunparameters');
+
+		// Resync/Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node aslpParser.js resync)
+
+		if ((ignorerunparams == null && process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null || parseInt(lbreply) != lbreply) {
+
+			console.log("--------------------");
+			console.log("Forcing a Rescan....");
+			console.log("--------------------");
+
+			await rclient.set('ASLP_lastscanblock', ASLPactivationHeight);
+			await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
+
+			// Remove items from MongoDB
+
+			let response = {};
+			let exists = true;
+
+			var mclient = await qdb.connect();
+			qdb.setClient(mclient);
+
+			exists = await qdb.doesCollectionExist('tokens');
+			console.log("Does collection 'tokens' Exist: " + exists);
+			if (exists == true) {
+				console.log("Removing all documents from 'tokens'");
+				await qdb.removeDocuments('tokens', {});
+			}
+			else {
+				console.log("Creating new collection 'tokens'");
+				await qdb.createCollection('tokens', {});
+			}
+
+			exists = await qdb.doesCollectionExist('addresses');
+			console.log("Does collection 'addresses' Exist: " + exists);
+			if (exists == true) {
+				console.log("Removing all documents from 'addresses'");
+				await qdb.removeDocuments('addresses', {});
+			}
+			else {
+				console.log("Creating new collection 'addresses'");
+				await qdb.createCollection('addresses', {});
+			}
+
+			exists = await qdb.doesCollectionExist('transactions');
+			console.log("Does collection 'transactions' Exist: " + exists);
+			if (exists == true) {
+				console.log("Removing all documents from 'transactions'");
+				await qdb.removeDocuments('transactions', {});
+			}
+			else {
+				console.log("Creating new collection 'transactions'");
+				await qdb.createCollection('transactions', {});
+			}
+
+			exists = await qdb.doesCollectionExist('journal');
+			console.log("Does collection 'journal' Exist: " + exists);
+			if (exists == true) {
+				console.log("Removing all documents from 'journal'");
+				await qdb.removeDocuments('journal', {});
+			}
+			else {
+				console.log("Creating new collection 'journal'");
+				await qdb.createCollection('journal', {});
+			}
+
+			exists = await qdb.doesCollectionExist('metadata');
+			console.log("Does collection 'metadata' Exist: " + exists);
+			if (exists == true) {
+				console.log("Removing all documents from 'metadata'");
+				await qdb.removeDocuments('metadata', {});
+			}
+			else {
+				console.log("Creating new collection 'metadata'");
+				await qdb.createCollection('metadata', {});
+			}
+
+			exists = await qdb.doesCollectionExist('counters');
+			console.log("Does collection 'counters' Exist: " + exists);
+			if (exists == true) {
+				console.log("Removing all documents from 'counters'");
+				await qdb.removeDocuments('counters', {});
+				await qdb.insertDocument('counters', {collection: 'journal', field: 'id', current: 0});
+			}
+
+			await aslp.indexDatabase(qdb);
+	
+			await qdb.close();
+
+			// Initialze things
+			initialize();
+
+		}
+		else if (ignorerunparams == null && process.argv.length == 4 && process.argv[2] == 'rollback') {
+
+			/* Roll back to specified blockheight and resume from there:   node aslpParser.js rollback 122343 */
+
+			var rollbackHeight = parseInt(process.argv[3]);
+
+			var mclient = await qdb.connect();
+			qdb.setClient(mclient);
+
+			console.log("Performing Rollback to Block Height: " + rollbackHeight);
+
+			await rebuildDbFromJournal(rollbackHeight, qdb);
+
+			initialize();
+
+		}
+		else {
+			await rclient.del('ASLP_ignorerunparameters');
+			// These aren't the droids we are looking for, move along...  
+			initialize();
+		}
+	
+	})();
+
+}
 
 // Main Functions
 // ==========================
