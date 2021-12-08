@@ -109,14 +109,14 @@ function dorun()
 
 		// Resync/Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node aslpParser.js resync)
 
-		if ((ignorerunparams == null && process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null || parseInt(lbreply) != lbreply) {
+		if ((ignorerunparams == null && process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null) {
 
 			console.log("--------------------");
 			console.log("Forcing a Rescan....");
 			console.log("--------------------");
 			
-			await rclient.set('ASLP_lastscanblock', '17891337');
-			await rclient.set('ASLP_lastblockid', '59a86d78b369c3cbc914101d4f940ad2004d6b1c4e716dc9e67004311b3a07a3');
+			await rclient.set('ASLP_lastscanblock', Big(ASLPactivationHeight).toFixed(0));
+			await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
 
 			// Remove items from MongoDB
 
@@ -237,7 +237,7 @@ function blockNotifyQueue() {
 
 	(async () => {
 		
-		var data = await rclienttwo.blpop('blockNotify', iniconfig.polling_interval);
+		var data = await rclienttwo.blPop('blockNotify', iniconfig.polling_interval);
 
 		if (data == 'blockNotify,new') {
 			newblocknotify();
@@ -366,7 +366,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 					var lastJournalBlockId = lastJournalEntry['blockId'];
 					var lastJournalBlockHeight = lastJournalEntry['blockHeight'];
 
-					await rclient.set('ASLP_lastscanblock', lastJournalBlockHeight);
+					await rclient.set('ASLP_lastscanblock', Big(lastJournalBlockHeight).toFixed(0));
 					await rclient.set('ASLP_lastblockid', lastJournalBlockId);
 					
 					console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
@@ -461,7 +461,7 @@ function doScan() {
 
 		var reply = await rclient.get('ASLP_lastscanblock');
 
-		if (reply == null || parseInt(reply) != reply) {
+		if (reply == null) {
 			scanBlockId = ASLPactivationHeight;
 		}
 		else {
@@ -686,7 +686,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 													// No longer use
 
-													await rclient.set('ASLP_lastscanblock', thisblockheight);
+													await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
 													await rclient.set('ASLP_lastblockid', blockidcode);
 
 													callback(null, count);
@@ -707,7 +707,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 											// No longer use
 
-											await rclient.set('ASLP_lastscanblock', thisblockheight);
+											await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
 											await rclient.set('ASLP_lastblockid', blockidcode);
 
 											try {
