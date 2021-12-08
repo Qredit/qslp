@@ -432,6 +432,9 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 					await qdb.updateDocument('counters', { "collection": "journal", "field": "id" }, { "current": lastJournalID });
 
 					console.log('Journal Rebuild Completed..');
+					console.log("lastJournalId: " + lastJournalID);
+					console.log("lastJournalBlockId: " + lastJournalBlockId);
+					console.log("lastJournalBlockHeight: " + lastJournalBlockHeight);
 	
 				}
 
@@ -455,7 +458,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 
 			console.log('Rollback completed in ' + elapsedTime + ' seconds');
 			
-			resolve(true);
+			//resolve(true);
 
 		})();
 
