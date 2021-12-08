@@ -347,7 +347,8 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 
 				// Remove all counters
 				await qdb.removeDocuments('counters', {});
-
+				await qdb.insertDocument('counters', {collection: 'journal', field: 'id', current: 0});
+				
 				// Get last journal entry after pruning			
 				var findLastJournal = await qdb.findDocumentsWithId('journal', {}, 1, { "_id": -1 }, 0);
 
@@ -372,7 +373,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 					console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
 
 					// Update Counters to new top Journal
-					await qdb.updateDocument('counters', { "_id": "journal" }, { "seq": lastJournalID });
+					await qdb.updateDocument('counters', { "collection": "journal", "field": "id" }, { "current": lastJournalID });
 
 					// Rebuild DB via Journal
 
