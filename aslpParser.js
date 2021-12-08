@@ -61,10 +61,10 @@ const qdb = new ASLPDB.default(mongoconnecturl, mongodatabase);
 const ASLPSchema = require("./lib/aslpSchema");
 const aslp = new ASLPSchema.default();
 
-const ASLPactivationHeight = 17891337;
-const ASLPactivationBlockId = '59a86d78b369c3cbc914101d4f940ad2004d6b1c4e716dc9e67004311b3a07a3';
-
 // Declaring some variable defaults
+
+var ASLPactivationHeight = 17891337;
+var ASLPactivationBlockId = '59a86d78b369c3cbc914101d4f940ad2004d6b1c4e716dc9e67004311b3a07a3';
 
 var scanBlockId = 0;
 var lastBlockId = '';
@@ -92,20 +92,14 @@ function dorun()
 
 		// Connect to Redis and setup some async call definitions
 		// Primary redis connection for get, set, del
-		const rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
+		rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
 		// Subscription redis connection
-		const rclienttwo = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
+		rclienttwo = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
 
 		// Let us know when we connect or have an error with redis
-		rclient.on('connect', function () {
-			console.log('Connected to Redis');
-		});
+		rclient.on('connect', () => console.log('Connected to Redis'));
+		rclient.on('error', (err) => console.log('Redis Client Error', err));
 
-		rclient.on('error', function () {
-			console.log("Error in Redis");
-			error_handle("Error in Redis", 'redisConnection');
-		});
-		
 		await rclient.connect();
 		await rclienttwo.connect();
 	
@@ -120,13 +114,8 @@ function dorun()
 			console.log("--------------------");
 			console.log("Forcing a Rescan....");
 			console.log("--------------------");
-
-console.log(ASLPactivationHeight);
-console.log(ASLPactivationBlockId);
-
-console.log(parseInt(ASLPactivationHeight).toString());
 			
-			await rclient.set('ASLP_lastscanblock', parseInt(ASLPactivationHeight));
+			await rclient.set('ASLP_lastscanblock', ASLPactivationHeight);
 			await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
 
 			// Remove items from MongoDB
