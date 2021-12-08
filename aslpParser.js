@@ -121,6 +121,9 @@ function dorun()
 			console.log("Forcing a Rescan....");
 			console.log("--------------------");
 
+console.log(ASLPactivationHeight);
+console.log(ASLPactivationBlockId);
+			
 			await rclient.set('ASLP_lastscanblock', ASLPactivationHeight);
 			await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
 
