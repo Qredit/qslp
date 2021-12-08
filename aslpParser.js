@@ -387,7 +387,6 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 						console.log('Rebuilding ' + getJournals.length + ' Journal Entries....');
 
 						jStart = jStart + jLimit;
-						if (getJournals.length == 0) jContinue = 0;
 
 						for (ji = 0; ji < getJournals.length; ji++) {
 
@@ -417,8 +416,16 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 								await rclient.set('ASLP_ignorerunparameters', 1);
 								process.exit(-1);
 							}
+							
+							var lastJournalBlockId = journalItem['blockId'];
+							var lastJournalBlockHeight = journalItem['blockHeight'];
 
+							await rclient.set('ASLP_lastscanblock', Big(lastJournalBlockHeight).toFixed(0));
+							await rclient.set('ASLP_lastblockid', lastJournalBlockId);
+						
 						}
+						
+						if (getJournals.length <= jLimit) jContinue = 0;
 
 					}
 
