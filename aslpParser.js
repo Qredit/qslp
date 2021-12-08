@@ -187,6 +187,7 @@ rclient.get('ASLP_lastscanblock', function (err, lbreply) {
 			if (exists == true) {
 				console.log("Removing all documents from 'counters'");
 				await qdb.removeDocuments('counters', {});
+				await qdb.insertDocument('counters', {collection: 'journal', field: 'id', current: 0});
 			}
 
 			await aslp.indexDatabase(qdb);
