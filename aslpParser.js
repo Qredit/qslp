@@ -112,9 +112,6 @@ rclient.on('error', function () {
 		console.log("Forcing a Rescan....");
 		console.log("--------------------");
 
-		await rclient.del('ASLP_lastscanblock');
-		await rclient.del('ASLP_lastblockid');
-
 		await rclient.set('ASLP_lastscanblock', ASLPactivationHeight);
 		await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
 
