@@ -123,8 +123,10 @@ function dorun()
 
 console.log(ASLPactivationHeight);
 console.log(ASLPactivationBlockId);
+
+console.log(parseInt(ASLPactivationHeight).toString());
 			
-			await rclient.set('ASLP_lastscanblock', ASLPactivationHeight);
+			await rclient.set('ASLP_lastscanblock', parseInt(ASLPactivationHeight));
 			await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
 
 			// Remove items from MongoDB
