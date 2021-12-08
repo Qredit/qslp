@@ -56,11 +56,6 @@ const mongodatabase = iniconfig.mongo_database;
 const ASLPDB = require("./lib/aslpDB");
 const qdb = new ASLPDB.default(mongoconnecturl, mongodatabase);
 
-// Connect to Redis and setup some async call definitions
-// Primary redis connection for get, set, del
-const rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
-// Subscription redis connection
-const rclienttwo = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
 
 // ASLP-1 Token Schema
 const ASLPSchema = require("./lib/aslpSchema");
@@ -85,15 +80,8 @@ var lastBlockNotify = Math.floor(new Date() / 1000);
 var scanLock = false;
 var scanLockTimer = 0;
 
-// Let us know when we connect or have an error with redis
-rclient.on('connect', function () {
-	console.log('Connected to Redis');
-});
-
-rclient.on('error', function () {
-	console.log("Error in Redis");
-	error_handle("Error in Redis", 'redisConnection');
-});
+var rclient;
+var rclienttwo;
 
 dorun();
 
@@ -101,7 +89,23 @@ function dorun()
 {
 	
 	(async () => {
-	
+
+		// Connect to Redis and setup some async call definitions
+		// Primary redis connection for get, set, del
+		const rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
+		// Subscription redis connection
+		const rclienttwo = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
+
+		// Let us know when we connect or have an error with redis
+		rclient.on('connect', function () {
+			console.log('Connected to Redis');
+		});
+
+		rclient.on('error', function () {
+			console.log("Error in Redis");
+			error_handle("Error in Redis", 'redisConnection');
+		});
+		
 		await rclient.connect();
 		await rclienttwo.connect();
 	
