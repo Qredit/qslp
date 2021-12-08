@@ -17,11 +17,9 @@ const Big = require('big.js');			 // required unless you want floating point mat
 const nodemailer = require('nodemailer');		 // for sending error reports about this node
 const crypto = require('crypto');			 // for creating hashes of things
 const SparkMD5 = require('spark-md5');  		 // Faster than crypto for md5
-const { promisify } = require('util');			 // Promise functions
 const asyncv3 = require('async');			 // Async Helper
 const { Client } = require('pg');				 // Postgres
 const { Transactions: ArkTransactions, Managers: ArkManagers, Utils: ArkUtils, Identities: ArkIdentities } = require("arkcrypto");
-
 
 const { onShutdown } = require('node-graceful-shutdown');
 
@@ -59,13 +57,10 @@ const ASLPDB = require("./lib/aslpDB");
 const qdb = new ASLPDB.default(mongoconnecturl, mongodatabase);
 
 // Connect to Redis and setup some async call definitions
+// Primary redis connection for get, set, del
 const rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
+// Subscription redis connection
 const rclienttwo = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
-const hgetAsync = promisify(rclient.hget).bind(rclient);
-const hsetAsync = promisify(rclient.hset).bind(rclient);
-const getAsync = promisify(rclient.get).bind(rclient);
-const setAsync = promisify(rclient.set).bind(rclient);
-const delAsync = promisify(rclient.del).bind(rclient);
 
 // ASLP-1 Token Schema
 const ASLPSchema = require("./lib/aslpSchema");
@@ -100,135 +95,131 @@ rclient.on('error', function () {
 	error_handle("Error in Redis", 'redisConnection');
 });
 
-
-rclient.get('ASLP_lastscanblock', function (err, lbreply) {
+(async () => {
+	
+	await rclient.connect();
+	await rclienttwo.connect();
+	
+	var lbreply = await rclient.get('ASLP_lastscanblock');
+	
+	var ignorerunparams = await rclient.get('ASLP_ignorerunparameters');
 
 	// Resync/Rescan Flag or Unknown last scan -  rescans all transaction (ie. #node aslpParser.js resync)
 
-	if ((process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null || parseInt(lbreply) != lbreply) {
+	if ((ignorerunparams == null && process.argv.length == 3 && process.argv[2] == 'resync') || lbreply == null || parseInt(lbreply) != lbreply) {
 
-		(async () => {
+		console.log("--------------------");
+		console.log("Forcing a Rescan....");
+		console.log("--------------------");
 
-			console.log("--------------------");
-			console.log("Forcing a Rescan....");
-			console.log("--------------------");
+		await rclient.del('ASLP_lastscanblock');
+		await rclient.del('ASLP_lastblockid');
 
-			await delAsync('ASLP_lastscanblock');
-			await delAsync('ASLP_lastblockid');
+		await rclient.set('ASLP_lastscanblock', ASLPactivationHeight);
+		await rclient.set('ASLP_lastblockid', ASLPactivationBlockId);
 
-			await setAsync('ASLP_lastscanblock', ASLPactivationHeight);
-			await setAsync('ASLP_lastblockid', ASLPactivationBlockId);
+		// Remove items from MongoDB
 
-			// Remove items from MongoDB
+		let response = {};
+		let exists = true;
 
-			let response = {};
-			let exists = true;
+		var mclient = await qdb.connect();
+		qdb.setClient(mclient);
 
-			var mclient = await qdb.connect();
-			qdb.setClient(mclient);
+		exists = await qdb.doesCollectionExist('tokens');
+		console.log("Does collection 'tokens' Exist: " + exists);
+		if (exists == true) {
+			console.log("Removing all documents from 'tokens'");
+			await qdb.removeDocuments('tokens', {});
+		}
+		else {
+			console.log("Creating new collection 'tokens'");
+			await qdb.createCollection('tokens', {});
+		}
 
-			exists = await qdb.doesCollectionExist('tokens');
-			console.log("Does collection 'tokens' Exist: " + exists);
-			if (exists == true) {
-				console.log("Removing all documents from 'tokens'");
-				await qdb.removeDocuments('tokens', {});
-			}
-			else {
-				console.log("Creating new collection 'tokens'");
-				await qdb.createCollection('tokens', {});
-			}
+		exists = await qdb.doesCollectionExist('addresses');
+		console.log("Does collection 'addresses' Exist: " + exists);
+		if (exists == true) {
+			console.log("Removing all documents from 'addresses'");
+			await qdb.removeDocuments('addresses', {});
+		}
+		else {
+			console.log("Creating new collection 'addresses'");
+			await qdb.createCollection('addresses', {});
+		}
 
-			exists = await qdb.doesCollectionExist('addresses');
-			console.log("Does collection 'addresses' Exist: " + exists);
-			if (exists == true) {
-				console.log("Removing all documents from 'addresses'");
-				await qdb.removeDocuments('addresses', {});
-			}
-			else {
-				console.log("Creating new collection 'addresses'");
-				await qdb.createCollection('addresses', {});
-			}
+		exists = await qdb.doesCollectionExist('transactions');
+		console.log("Does collection 'transactions' Exist: " + exists);
+		if (exists == true) {
+			console.log("Removing all documents from 'transactions'");
+			await qdb.removeDocuments('transactions', {});
+		}
+		else {
+			console.log("Creating new collection 'transactions'");
+			await qdb.createCollection('transactions', {});
+		}
 
-			exists = await qdb.doesCollectionExist('transactions');
-			console.log("Does collection 'transactions' Exist: " + exists);
-			if (exists == true) {
-				console.log("Removing all documents from 'transactions'");
-				await qdb.removeDocuments('transactions', {});
-			}
-			else {
-				console.log("Creating new collection 'transactions'");
-				await qdb.createCollection('transactions', {});
-			}
+		exists = await qdb.doesCollectionExist('journal');
+		console.log("Does collection 'journal' Exist: " + exists);
+		if (exists == true) {
+			console.log("Removing all documents from 'journal'");
+			await qdb.removeDocuments('journal', {});
+		}
+		else {
+			console.log("Creating new collection 'journal'");
+			await qdb.createCollection('journal', {});
+		}
 
-			exists = await qdb.doesCollectionExist('journal');
-			console.log("Does collection 'journal' Exist: " + exists);
-			if (exists == true) {
-				console.log("Removing all documents from 'journal'");
-				await qdb.removeDocuments('journal', {});
-			}
-			else {
-				console.log("Creating new collection 'journal'");
-				await qdb.createCollection('journal', {});
-			}
+		exists = await qdb.doesCollectionExist('metadata');
+		console.log("Does collection 'metadata' Exist: " + exists);
+		if (exists == true) {
+			console.log("Removing all documents from 'metadata'");
+			await qdb.removeDocuments('metadata', {});
+		}
+		else {
+			console.log("Creating new collection 'metadata'");
+			await qdb.createCollection('metadata', {});
+		}
 
-			exists = await qdb.doesCollectionExist('metadata');
-			console.log("Does collection 'metadata' Exist: " + exists);
-			if (exists == true) {
-				console.log("Removing all documents from 'metadata'");
-				await qdb.removeDocuments('metadata', {});
-			}
-			else {
-				console.log("Creating new collection 'metadata'");
-				await qdb.createCollection('metadata', {});
-			}
+		exists = await qdb.doesCollectionExist('counters');
+		console.log("Does collection 'counters' Exist: " + exists);
+		if (exists == true) {
+			console.log("Removing all documents from 'counters'");
+			await qdb.removeDocuments('counters', {});
+			await qdb.insertDocument('counters', {collection: 'journal', field: 'id', current: 0});
+		}
 
-			exists = await qdb.doesCollectionExist('counters');
-			console.log("Does collection 'counters' Exist: " + exists);
-			if (exists == true) {
-				console.log("Removing all documents from 'counters'");
-				await qdb.removeDocuments('counters', {});
-				await qdb.insertDocument('counters', {collection: 'journal', field: 'id', current: 0});
-			}
+		await aslp.indexDatabase(qdb);
 
-			await aslp.indexDatabase(qdb);
+		await qdb.close();
 
-			await qdb.close();
-
-			// Initialze things
-			initialize();
-
-		})();
+		// Initialze things
+		initialize();
 
 	}
-	else if (process.argv.length == 4 && process.argv[2] == 'rollback') {
+	else if (ignorerunparams == null && process.argv.length == 4 && process.argv[2] == 'rollback') {
 
 		/* Roll back to specified blockheight and resume from there:   node aslpParser.js rollback 122343 */
 
-		(async () => {
+		var rollbackHeight = parseInt(process.argv[3]);
 
-			var rollbackHeight = parseInt(process.argv[3]);
+		var mclient = await qdb.connect();
+		qdb.setClient(mclient);
 
-			var mclient = await qdb.connect();
-			qdb.setClient(mclient);
+		console.log("Performing Rollback to Block Height: " + rollbackHeight);
 
-			console.log("Performing Rollback to Block Height: " + rollbackHeight);
+		await rebuildDbFromJournal(rollbackHeight, qdb);
 
-			await rebuildDbFromJournal(rollbackHeight, qdb);
-
-			console.log("Restarting...");
-
-			process.exit(-1);
-
-		})();
+		initialize();
 
 	}
 	else {
+		await rclient.del('ASLP_ignorerunparameters');
 		// These aren't the droids we are looking for, move along...  
 		initialize();
 	}
-
-});
-
+	
+})();
 
 // Main Functions
 // ==========================
@@ -242,7 +233,9 @@ function initialize() {
 
 function blockNotifyQueue() {
 
-	rclienttwo.blpop('blockNotify', iniconfig.polling_interval, function (err, data) {
+	(async () => {
+		
+		var data = await rclienttwo.blpop('blockNotify', iniconfig.polling_interval);
 
 		if (data == 'blockNotify,new') {
 			newblocknotify();
@@ -256,8 +249,8 @@ function blockNotifyQueue() {
 
 		blockNotifyQueue();
 
-	});
-
+	})();
+	
 }
 
 function downloadChain() {
@@ -267,7 +260,7 @@ function downloadChain() {
 
 	(async () => {
 
-		var doresync = await getAsync('ASLP_resyncfromjournalheight');
+		var doresync = await rclient.get('ASLP_resyncfromjournalheight');
 
 		if (doresync != null) {
 
@@ -278,7 +271,7 @@ function downloadChain() {
 
 			await rebuildDbFromJournal(parseInt(doresync), qdb);
 
-			await delAsync('ASLP_resyncfromjournalheight');
+			await rclient.del('ASLP_resyncfromjournalheight');
 
 			await qdb.close();
 
@@ -312,7 +305,7 @@ function downloadChain() {
 
 function syncJournalFromPeer() {
 
-
+	// TODO
 
 
 
@@ -355,13 +348,14 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				var lastJournalEntry = findLastJournal[0];
 				
 				if (!lastJournalEntry) {
+					
 					// Something Broke.  Start over....
 
-					rclient.del('ASLP_lastblockid', function (err, reply) {
-						rclient.del('ASLP_lastscanblock', function (err, reply) {
-							process.exit(-1);
-						});
-					});
+					await rclient.del('ASLP_lastblockid');
+					await rclient.del('ASLP_lastscanblock');
+					
+					await rclient.set('ASLP_ignorerunparameters', 1);
+					process.exit(-1);
 
 				}
 				else {
@@ -370,8 +364,8 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 					var lastJournalBlockId = lastJournalEntry['blockId'];
 					var lastJournalBlockHeight = lastJournalEntry['blockHeight'];
 
-					await setAsync('ASLP_lastscanblock', lastJournalBlockHeight);
-					await setAsync('ASLP_lastblockid', lastJournalBlockId);
+					await rclient.set('ASLP_lastscanblock', lastJournalBlockHeight);
+					await rclient.set('ASLP_lastblockid', lastJournalBlockId);
 					
 					console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
 
@@ -415,12 +409,11 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 							else {
 								console.log('UNKNOWN Journal Action - FATAL');
 
-								rclient.del('ASLP_lastblockid', function (err, reply) {
-									rclient.del('ASLP_lastscanblock', function (err, reply) {
-										process.exit(-1);
-									});
-								});
-
+								await rclient.del('ASLP_lastblockid');
+								await rclient.del('ASLP_lastscanblock');
+								
+								await rclient.set('ASLP_ignorerunparameters', 1);
+								process.exit(-1);
 							}
 
 						}
@@ -438,12 +431,11 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				console.log("Last Journal Entry:");
 				console.log(lastJournalEntry);
 
-				rclient.del('ASLP_lastblockid', function (err, reply) {
-					rclient.del('ASLP_lastscanblock', function (err, reply) {
-						process.exit(-1);
-					});
-				});
-
+				await rclient.del('ASLP_lastblockid');
+				await rclient.del('ASLP_lastscanblock');
+						
+				await rclient.set('ASLP_ignorerunparameters', 1);
+				process.exit(-1);
 			}
 
 			var endTime = (new Date()).getTime();
@@ -460,15 +452,14 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 
 function doScan() {
 
-	scanLock = true;
-	scanLockTimer = Math.floor(new Date() / 1000);
+	(async () => {
+		
+		scanLock = true;
+		scanLockTimer = Math.floor(new Date() / 1000);
 
-	rclient.get('ASLP_lastscanblock', function (err, reply) {
+		var reply = await rclient.get('ASLP_lastscanblock');
 
-		if (err) {
-			console.log(err);
-		}
-		else if (reply == null || parseInt(reply) != reply) {
+		if (reply == null || parseInt(reply) != reply) {
 			scanBlockId = ASLPactivationHeight;
 		}
 		else {
@@ -477,45 +468,35 @@ function doScan() {
 
 		//
 
-		rclient.get('ASLP_lastblockid', function (err, replytwo) {
+		var replytwo = await rclient.get('ASLP_lastblockid');
 
-			if (err) {
-				console.log(err);
-			}
-			else if (reply == null) {
-				lastBlockId = '';
-			}
-			else {
-				lastBlockId = replytwo;
-			}
+		if (reply == null) {
+			lastBlockId = '';
+		}
+		else {
+			lastBlockId = replytwo;
+		}
 
+		//
 
-			//
+		console.log('Scanning from Height: #' + scanBlockId + '.....');
 
-			console.log('Scanning from Height: #' + scanBlockId + '.....');
+		var currentHeight = 0;
 
-			(async () => {
+		var pgclient = new Client({ user: iniconfig.pg_username, database: iniconfig.pg_database, password: iniconfig.pg_password });
+		await pgclient.connect()
+		var message = await pgclient.query('SELECT * FROM blocks ORDER BY height DESC LIMIT 1');
 
-				var currentHeight = 0;
+		if (message && message.rows) currentHeight = parseInt(message.rows[0].height);
 
-				var pgclient = new Client({ user: iniconfig.pg_username, database: iniconfig.pg_database, password: iniconfig.pg_password });
-				await pgclient.connect()
-				var message = await pgclient.query('SELECT * FROM blocks ORDER BY height DESC LIMIT 1');
+		console.log('New ASLP Block Height: #' + currentHeight);
 
-				if (message && message.rows) currentHeight = parseInt(message.rows[0].height);
+		var mclient = await qdb.connect();
+		qdb.setClient(mclient);
 
-				console.log('New ASLP Block Height: #' + currentHeight);
-
-				var mclient = await qdb.connect();
-				qdb.setClient(mclient);
-
-				await whilstScanBlocks(scanBlockId, currentHeight, pgclient, qdb);
-
-			})();
-
-		});
-
-	});
+		await whilstScanBlocks(scanBlockId, currentHeight, pgclient, qdb);
+		
+	})();
 
 }
 
@@ -571,11 +552,11 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 											console.log("ThisBlockHeight: " + thisblockheight);
 											console.log("LastScanBlock: " + count);
 
-											rclient.del('ASLP_lastblockid', function (err, reply) {
-												rclient.del('ASLP_lastscanblock', function (err, reply) {
-													process.exit(-1);
-												});
-											});
+											await rclient.del('ASLP_lastblockid');
+											await rclient.del('ASLP_lastscanblock');
+											
+											await rclient.set('ASLP_ignorerunparameters', 1);
+											process.exit(-1);
 
 										}
 										else {
@@ -584,6 +565,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 											await rebuildDbFromJournal(rollbackHeight, qdb);
 
+											await rclient.set('ASLP_ignorerunparameters', 1);
 											process.exit(-1);
 
 										}
@@ -702,8 +684,8 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 													// No longer use
 
-													await setAsync('ASLP_lastscanblock', thisblockheight);
-													await setAsync('ASLP_lastblockid', blockidcode);
+													await rclient.set('ASLP_lastscanblock', thisblockheight);
+													await rclient.set('ASLP_lastblockid', blockidcode);
 
 													callback(null, count);
 
@@ -723,8 +705,8 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 											// No longer use
 
-											await setAsync('ASLP_lastscanblock', thisblockheight);
-											await setAsync('ASLP_lastblockid', blockidcode);
+											await rclient.set('ASLP_lastscanblock', thisblockheight);
+											await rclient.set('ASLP_lastblockid', blockidcode);
 
 											try {
 												callback(null, count);
