@@ -94,7 +94,7 @@ function dorun()
 		// Primary redis connection for get, set, del
 		rclient = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
 		// Subscription redis connection
-		rclienttwo = redis.createClient(iniconfig.redis_port, iniconfig.redis_host, { detect_buffers: true });
+		rclienttwo = rclient.duplicate();
 
 		// Let us know when we connect or have an error with redis
 		rclient.on('connect', () => console.log('Connected to Redis'));
@@ -115,7 +115,7 @@ function dorun()
 			console.log("Forcing a Rescan....");
 			console.log("--------------------");
 			
-			await rclient.set('ASLP_lastscanblock', 17891337);
+			await rclient.set('ASLP_lastscanblock', '17891337');
 			await rclient.set('ASLP_lastblockid', '59a86d78b369c3cbc914101d4f940ad2004d6b1c4e716dc9e67004311b3a07a3');
 
 			// Remove items from MongoDB
