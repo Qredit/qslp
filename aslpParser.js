@@ -597,7 +597,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 									if (parseInt(blocktranscount) > 0 && thisblockheight >= ASLPactivationHeight) {
 
-										var response = await pgclient.query('SELECT * FROM transactions WHERE block_id = $1 ORDER BY sequence ASC', [blockidcode]);
+										var tresponse = await pgclient.query('SELECT * FROM transactions WHERE block_id = $1 ORDER BY sequence ASC', [blockidcode]);
 
 										if (tresponse && tresponse.rows) {
 
