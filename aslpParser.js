@@ -356,7 +356,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 					await rclient.del('ASLP_lastblockid');
 					await rclient.del('ASLP_lastscanblock');
 					
-					await rclient.set('ASLP_ignorerunparameters', 1);
+					await rclient.set('ASLP_ignorerunparameters', '1');
 					process.exit(-1);
 
 				}
@@ -413,7 +413,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 								await rclient.del('ASLP_lastblockid');
 								await rclient.del('ASLP_lastscanblock');
 								
-								await rclient.set('ASLP_ignorerunparameters', 1);
+								await rclient.set('ASLP_ignorerunparameters', '1');
 								process.exit(-1);
 							}
 							
@@ -448,7 +448,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				await rclient.del('ASLP_lastblockid');
 				await rclient.del('ASLP_lastscanblock');
 						
-				await rclient.set('ASLP_ignorerunparameters', 1);
+				await rclient.set('ASLP_ignorerunparameters', '1');
 				process.exit(-1);
 			}
 
@@ -571,7 +571,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 											await rclient.del('ASLP_lastblockid');
 											await rclient.del('ASLP_lastscanblock');
 											
-											await rclient.set('ASLP_ignorerunparameters', 1);
+											await rclient.set('ASLP_ignorerunparameters', '1');
 											process.exit(-1);
 
 										}
@@ -581,7 +581,7 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 											await rebuildDbFromJournal(rollbackHeight, qdb);
 
-											await rclient.set('ASLP_ignorerunparameters', 1);
+											await rclient.set('ASLP_ignorerunparameters', '1');
 											process.exit(-1);
 
 										}
