@@ -429,7 +429,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 
 					await rclient.set('ASLP_lastscanblock', Big(lastJournalBlockHeight).toFixed(0));
 					await rclient.set('ASLP_lastblockid', lastJournalBlockId);
-					await qdb.updateDocument('counters', { "collection": "journal", "field": "id" }, { "current": lastJournalID });
+					await qdb.updateDocument('counters', { "collection": "journal", "field": "id" }, { "current": parseInt(lastJournalID) });
 
 					console.log('Journal Rebuild Completed..');
 					console.log("lastJournalId: " + lastJournalID);
