@@ -21,7 +21,6 @@
     "ini": "^1.3.5",
     "install": "^0.13.0",
     "mongodb": "^4.2.1",
-    "mongo-autoincrement": "^1.0.1",
     "node-graceful-shutdown": "^1.0.3",
     "nodemailer": "^6.4.2",
     "npm": "^6.13.4",
