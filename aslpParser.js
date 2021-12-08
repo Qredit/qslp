@@ -354,6 +354,8 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 
 				var lastJournalEntry = findLastJournal[0];
 
+console.log(lastJournalEntry);
+				
 				if (!lastJournalEntry) {
 					// Something Broke.  Start over....
 
@@ -440,6 +442,9 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 				});
 
 			}
+
+console.log("lastJournalBlockHeight:" + lastJournalBlockHeight);
+console.log("lastJournalBlockId:" + lastJournalBlockId);
 
 			await setAsync('ASLP_lastscanblock', lastJournalBlockHeight);
 			await setAsync('ASLP_lastblockid', lastJournalBlockId);
