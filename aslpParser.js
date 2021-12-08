@@ -425,7 +425,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 						
 						}
 						
-						if (getJournals.length <= jLimit) jContinue = 0;
+						if (getJournals.length < jLimit) jContinue = 0;
 
 					}
 
