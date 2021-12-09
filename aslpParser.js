@@ -326,7 +326,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 			try {
 
 				// Remove Journal Entries above the rollback	
-				await qdb.removeDocuments('journal', { "blockHeight": { $gte: journalHeight } });
+				await qdb.removeDocuments('journal', { "blockHeight": { $gt: journalHeight } });
 
 				// Remove all tokens
 				await qdb.removeDocuments('tokens', {});
@@ -372,7 +372,7 @@ function rebuildDbFromJournal(journalHeight, qdb) {
 					console.log('ROLLBACK TO: ' + lastJournalID + ":" + lastJournalBlockHeight + ":" + lastJournalBlockId);
 
 					// Update Counters to new top Journal
-					await qdb.updateDocument('counters', { "collection": "journal", "field": "id" }, { "current": lastJournalID });
+					await qdb.updateDocument('counters', { "collection": "journal", "field": "id" }, { "current": parseInt(lastJournalID) });
 
 					// Rebuild DB via Journal
 
