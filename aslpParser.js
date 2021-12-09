@@ -706,16 +706,20 @@ console.log(message2);
 
 											}
 
-												// No longer use
+											// No longer use? idk
 
 											await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
 											await rclient.set('ASLP_lastblockid', blockidcode);
 
 											callback(null, count);
-;
+
 
 										}
 										else {
+
+											await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
+											await rclient.set('ASLP_lastblockid', blockidcode)
+											
 											// This needs to be handled.  TODO:	 Missing transactions when there should be some
 											callback(null, count);
 										}
@@ -725,7 +729,7 @@ console.log(message2);
 									}
 									else {
 
-										// No longer use
+										// No longer use? idk
 
 										await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
 										await rclient.set('ASLP_lastblockid', blockidcode);
