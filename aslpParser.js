@@ -555,19 +555,8 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 								var previousblockid = blockdata.previous_block;
 
 								if (lastBlockId != previousblockid && thisblockheight > 1) {
-
-console.log("Debugging..");
-console.log("lastBlockId: " + lastBlockId);
-console.log("previousblockid: " + previousblockid);
-console.log("blockdata:");
-console.log(blockdata);
-
-// Get ranged blocks
-var message2 = await pgclient.query('SELECT id, number_of_transactions, height, previous_block FROM blocks WHERE height > $1 LIMIT 10', [count-5]);
-console.log(message2);
 									
 									// New code attempts a rollback
-
 
 									var rollbackHeight = thisblockheight - 5;
 									if (rollbackHeight < 0) {
