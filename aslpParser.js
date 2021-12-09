@@ -794,12 +794,12 @@ function newblocknotify() {
 	console.log('Found New Blocks............');
 
 	if (scanLock == true) {
-		// TODO:  Check if it is a stale lock
+		// Check if it is a stale lock (iniconfig.scanlock_staletime >= 90 should work best, less than that and it might not actually be stale...)
 		var currentUnixTime = Math.floor(new Date() / 1000);
 		if (scanLockTimer < (currentUnixTime - iniconfig.scanlock_staletime)) {
 			// force unlock
 			console.log("Forcing scanlock Unlock....");
-			//scanLock = false;
+			scanLock = false;
 		}
 
 
