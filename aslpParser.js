@@ -556,6 +556,13 @@ async function whilstScanBlocks(count, max, pgclient, qdb) {
 
 								if (lastBlockId != previousblockid && thisblockheight > 1) {
 
+console.log("Debugging..");
+console.log("lastBlockId: " + lastBlockId);
+console.log("previousblockid: " + previousblockid);
+console.log("blockdata:");
+console.log(blockdata);
+									
+									
 									// New code attempts a rollback
 
 
