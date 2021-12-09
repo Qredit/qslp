@@ -799,7 +799,7 @@ function newblocknotify() {
 		if (scanLockTimer < (currentUnixTime - iniconfig.scanlock_staletime)) {
 			// force unlock
 			console.log("Forcing scanlock Unlock....");
-			scanLock = false;
+			//scanLock = false;
 		}
 
 
