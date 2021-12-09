@@ -486,7 +486,7 @@ function doScan() {
 
 		var replytwo = await rclient.get('ASLP_lastblockid');
 
-		if (reply == null) {
+		if (replytwo == null) {
 			lastBlockId = '';
 		}
 		else {
@@ -706,8 +706,6 @@ console.log(message2);
 
 											}
 
-											// No longer use? idk
-
 											await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
 											await rclient.set('ASLP_lastblockid', blockidcode);
 
@@ -721,6 +719,9 @@ console.log(message2);
 											await rclient.set('ASLP_lastblockid', blockidcode)
 											
 											// This needs to be handled.  TODO:	 Missing transactions when there should be some
+											
+											console.log('Error:  Expecting transactions but there were none...');
+											
 											callback(null, count);
 										}
 
@@ -728,8 +729,6 @@ console.log(message2);
 
 									}
 									else {
-
-										// No longer use? idk
 
 										await rclient.set('ASLP_lastscanblock', Big(thisblockheight).toFixed(0));
 										await rclient.set('ASLP_lastblockid', blockidcode);
